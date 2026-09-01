@@ -1,0 +1,40 @@
+# WordPress core — never commit; only the theme is ours
+/wordpress/
+/wp-admin/
+/wp-includes/
+wp-config.php
+wp-config-local.php
+
+# Uploads and cache
+/wp-content/uploads/
+/wp-content/cache/
+/wp-content/upgrade/
+/wp-content/backup*/
+
+# Plugins are installed, not vendored (cap: 3 — see CONTEXT.md §4)
+/wp-content/plugins/
+
+# Secrets
+.env
+.env.local
+*.key
+*.pem
+
+# Local WordPress dev environments
+/local/
+/.localwp/
+*.sql
+*.sql.gz
+
+# Graphify output
+/graphify-out/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Claude local overrides
+.claude/settings.local.json

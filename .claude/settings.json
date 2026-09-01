@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'ENFORCE CLAUDE.md SKILL RULES THIS TURN: 1) find files/components with the graphify skill, not Glob/Grep/find; 2) reply to the user in caveman-compress style; 3) use firecrawl ONLY when content is missing from ../jbnewgen/UPDATE/; 4) never invent content shown on the site; 5) check ../jbnewgen/UPDATE/README.txt before decisions; 6) NEVER move nameservers - A record only, or company email dies; 7) do NOT save collection/global files in ../jbnewgen - it pushes schema straight to the production Neon DB. END your reply with one line reporting which skills you used and why for any you skipped.'",
+            "statusMessage": "Loading skill rules..."
+          }
+        ]
+      }
+    ]
+  }
+}
