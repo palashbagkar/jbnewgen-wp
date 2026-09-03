@@ -1,0 +1,1879 @@
+/* jbnewgen wp-admin theme — dark, minimal, monochrome.
+   Two kinds of things exist in this UI:
+     BOXES   — buttons, inputs, cards, tabs. Fill is ALWAYS --jb-box, never
+               changes on hover. Only the border color moves, between
+               --jb-border (resting) and --jb-border-selected (hover/focus/
+               current). Radius is always --jb-radius.
+     LABELS  — plain text links with no box around them (sidebar nav, admin
+               bar items, row-title links, filter links). --jb-label at rest,
+               pure white on hover/current. No background ever.
+   Everything else (static text, headings, field values) is plain white.
+   Every border is 1px. Admin-only, never loads on the front end. */
+
+/* Every value below is lifted from Payload 3.86's own stylesheet
+   (@payloadcms/ui/dist/scss/{colors,vars,app}.scss) so this admin matches the
+   Payload CMS it replaces. The site's custom.scss is empty — the look being
+   copied is Payload's stock dark theme, not a bespoke one.
+
+   Payload token          -> value (dark)      -> ours
+   --theme-elevation-0    -> rgb(20,20,20)     -> --jb-bg
+   --theme-input-bg / 50  -> rgb(34,34,34)     -> --jb-box
+   --theme-border-color   -> rgb(60,60,60)     -> --jb-border
+   --theme-elevation-250  -> rgb(87,87,87)     -> --jb-border-selected
+   --theme-elevation-400  -> rgb(141,141,141)  -> --jb-label
+   --theme-elevation-500  -> rgb(128,128,128)  -> --jb-border-strong
+   --theme-text (dark)    -> rgb(255,255,255)  -> --jb-text                */
+
+:root {
+	--jb-bg: #141414;
+	--jb-box: #222222;
+	--jb-border-selected: #575757;
+	--jb-border-strong: #808080;
+	--jb-border: #3c3c3c;
+	--jb-label: #8d8d8d;
+	--jb-text: #ffffff;
+
+	/* Payload: $style-radius-s/m/l */
+	--jb-radius-s: 3px;
+	--jb-radius: 4px;
+	--jb-radius-l: 8px;
+
+	/* Payload: $baseline-px 20px, $baseline-body-size 13px */
+	--jb-base: 20px;
+	--jb-gutter: 60px;   /* base(3) */
+	--jb-nav-width: 275px;
+	--jb-header-height: 56px; /* base(2.8) */
+
+	/* Payload: 100ms cubic-bezier(0, .2, .2, 1), --nav-trans-time 150ms */
+	--jb-ease: cubic-bezier(0, .2, .2, 1);
+	--jb-fast: 100ms;
+	--jb-med: 150ms;
+}
+
+/* ---------- base ---------- */
+
+/* Payload runs a 275px nav and a 13px base type size; WordPress defaults to
+   160px and 13px-ish via its own rules, so both are set explicitly. */
+@media screen and (min-width: 961px) {
+	#adminmenuback,
+	#adminmenuwrap,
+	#adminmenu {
+		width: var(--jb-nav-width) !important;
+		min-width: var(--jb-nav-width) !important;
+	}
+	body:not(.folded) #wpcontent,
+	body:not(.folded) #wpfooter {
+		margin-left: var(--jb-nav-width) !important;
+	}
+}
+
+body.wp-admin,
+body.wp-admin #wpcontent,
+body.wp-admin #wpbody-content,
+#adminmenuback,
+#adminmenuwrap,
+#adminmenu,
+#adminmenu .wp-submenu,
+#adminmenu li.menu-top,
+#adminmenu li.wp-has-current-submenu .wp-submenu,
+#wpadminbar {
+	background: var(--jb-bg);
+	color: var(--jb-text);
+}
+
+body.wp-admin,
+body.wp-admin input,
+body.wp-admin select,
+body.wp-admin textarea,
+body.wp-admin button {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.wrap h1.wp-heading-inline,
+.wrap h1,
+.wrap h2:not(.nav-tab-wrapper) {
+	color: var(--jb-text);
+	font-weight: 600;
+	letter-spacing: -0.01em;
+}
+
+body.wp-admin hr { border-color: var(--jb-border); }
+
+/* plain static text WP core colors explicitly — catch it broadly so nothing
+   goes invisible against the dark background */
+body.wp-admin label,
+body.wp-admin p,
+body.wp-admin span,
+body.wp-admin th,
+body.wp-admin td,
+body.wp-admin h3,
+body.wp-admin h4,
+body.wp-admin .description,
+body.wp-admin .howto,
+body.wp-admin legend {
+	color: var(--jb-text) !important;
+}
+
+/* ---------- labels (text links, no box, ever) ---------- */
+
+body.wp-admin a {
+	color: var(--jb-label);
+	transition: color .12s ease;
+}
+body.wp-admin a:hover,
+body.wp-admin a:focus {
+	color: var(--jb-text);
+}
+/* things that are unmistakably body copy, not navigation — keep them white
+   even though they're technically <a> in WP's markup */
+body.wp-admin .description a,
+body.wp-admin .cf-field__help a,
+body.wp-admin p a {
+	color: var(--jb-text);
+	text-decoration: underline;
+}
+
+/* --- admin bar: site name, "+ New", account. No border under it. --- */
+
+#wpadminbar { border-bottom: none !important; box-shadow: none !important; }
+#wpadminbar,
+#wpadminbar .ab-item,
+#wpadminbar a.ab-item,
+#wpadminbar > #wp-toolbar span.ab-label,
+#wpadminbar > #wp-toolbar span.noticon,
+#wpadminbar .ab-icon:before,
+#wpadminbar .ab-item:before {
+	color: var(--jb-label) !important;
+	background: transparent !important;
+}
+#wpadminbar .ab-top-menu > li:hover > .ab-item,
+#wpadminbar .ab-top-menu > li.hover > .ab-item,
+#wpadminbar .ab-top-menu > li > .ab-item:focus,
+#wpadminbar .ab-top-menu > li:hover .ab-icon:before,
+#wpadminbar .ab-top-menu > li:hover .ab-item:before,
+#wpadminbar #wp-admin-bar-my-account:hover > .ab-item,
+#wpadminbar #wp-admin-bar-my-account.hover > .ab-item,
+#wpadminbar #wp-admin-bar-my-account:hover .ab-item:before {
+	color: var(--jb-text) !important;
+	background: transparent !important;
+}
+/* dropdown panels hanging off the bar */
+#wpadminbar .ab-sub-wrapper,
+#wpadminbar .ab-submenu,
+#wpadminbar .menupop .ab-sub-wrapper {
+	background: var(--jb-box) !important;
+	border: 1px solid var(--jb-border) !important;
+	border-radius: var(--jb-radius) !important;
+	overflow: hidden;
+	box-shadow: none !important;
+}
+#wpadminbar .ab-submenu .ab-item:hover,
+#wpadminbar .quicklinks .menupop ul li a:hover {
+	background: var(--jb-bg) !important;
+	color: var(--jb-text) !important;
+}
+#wpadminbar #wp-admin-bar-wp-logo,
+#wpadminbar #wp-admin-bar-wp-logo-external { display: none; }
+
+/* --- sidebar: no icons, no separators, no flyout pointer bars --- */
+
+#adminmenu .wp-menu-image,
+#adminmenu .wp-menu-separator,
+#adminmenu li.wp-menu-separator,
+#adminmenu .wp-menu-arrow,
+#adminmenu .awaiting-mod,
+#adminmenu .update-plugins {
+	display: none !important;
+}
+/* the gray pointer triangles WordPress draws beside hovered/current items */
+#adminmenu li.menu-top:after,
+#adminmenu li.menu-top:before,
+#adminmenu a.menu-top:after,
+#adminmenu a.menu-top:before,
+ul#adminmenu a.wp-has-current-submenu:after,
+ul#adminmenu > li.current > a.current:after,
+#adminmenu li.wp-has-submenu.wp-not-current-submenu:hover:after,
+#adminmenu li.wp-has-submenu.wp-not-current-submenu:focus-within:after {
+	display: none !important;
+	border: none !important;
+	content: none !important;
+}
+
+#adminmenu a.menu-top,
+#adminmenu .wp-submenu a {
+	padding-left: 18px !important;
+}
+#adminmenu .wp-menu-name { padding: 8px 0 !important; }
+
+#adminmenu,
+#adminmenu a,
+#adminmenu .wp-submenu a,
+#adminmenu .wp-submenu-head {
+	color: var(--jb-label) !important;
+	background: transparent !important;
+}
+#adminmenu li.menu-top:hover,
+#adminmenu li.opensub > a.menu-top,
+#adminmenu li > a.menu-top:focus,
+#adminmenu .wp-submenu a:hover,
+#adminmenu .wp-submenu a:focus,
+#adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
+#adminmenu li.current a.menu-top,
+#adminmenu .wp-submenu li.current a,
+#adminmenu a.wp-has-current-submenu + .wp-submenu li.current a,
+#adminmenu li.current > a.current {
+	color: var(--jb-text) !important;
+	background: transparent !important;
+	box-shadow: none !important;
+}
+/* hover flyout for collapsed sub-menus — a themed panel, not WP's gray slab */
+#adminmenu .wp-submenu {
+	background: var(--jb-box) !important;
+	border: 1px solid var(--jb-border) !important;
+	border-radius: var(--jb-radius) !important;
+	box-shadow: none !important;
+}
+#adminmenu .wp-has-current-submenu .wp-submenu,
+#adminmenu .wp-has-current-submenu.opensub .wp-submenu,
+#adminmenu .wp-has-current-submenu .wp-submenu.sub-open {
+	background: transparent !important;
+	border: none !important;
+	border-radius: 0 !important;
+}
+
+/* Kill every left-edge bar WordPress paints on menu items: the 4px inset
+   shadow on hover/focus and the 5px transparent left border on flyouts. */
+#adminmenu li,
+#adminmenu a,
+#adminmenu li.menu-top:hover,
+#adminmenu li.opensub > a.menu-top,
+#adminmenu li > a.menu-top:focus,
+#adminmenu .wp-submenu,
+#adminmenu .wp-not-current-submenu .wp-submenu,
+#adminmenu .wp-submenu-head,
+#adminmenu .wp-submenu-head:hover,
+#collapse-button,
+#collapse-button:hover,
+#collapse-button:focus {
+	box-shadow: none !important;
+	border-left-width: 0 !important;
+}
+
+/* thin divider between the sidebar and the content area */
+#adminmenuback,
+#adminmenuwrap { border-right: 1px solid var(--jb-border) !important; }
+
+/* section headers — clickable collapse toggles with a chevron */
+#adminmenu li.jb-menu-section > a,
+#adminmenu li.jb-menu-section > a:hover {
+	position: relative;
+	cursor: pointer;
+	color: var(--jb-label) !important;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: .1em;
+	text-transform: uppercase;
+	padding: 22px 32px 6px 18px !important;
+}
+#adminmenu li.jb-menu-section > a:hover { color: var(--jb-text) !important; }
+#adminmenu li.jb-menu-section > a:after {
+	content: "";
+	position: absolute;
+	right: 18px;
+	top: 24px;
+	width: 6px;
+	height: 6px;
+	border-right: 1.5px solid currentColor;
+	border-bottom: 1.5px solid currentColor;
+	transform: rotate(45deg);
+	transition: transform .15s ease;
+}
+#adminmenu li.jb-menu-section.is-collapsed > a:after {
+	transform: rotate(-45deg);
+}
+
+/* the collapse control now lives in the admin bar, so hide the sidebar one */
+#collapse-menu { display: none !important; }
+
+/* Toggle sits far left; account, + New and the site name sit far right.
+   `display: contents` on the two <ul>s lets their items become flex children
+   of the toolbar so they can be ordered as one sequence instead of two
+   separate groups; `margin-left: auto` on the first right-hand item pushes
+   it and everything after it to the far edge. */
+#wpadminbar #wp-toolbar { display: flex; align-items: center; }
+#wpadminbar #wp-admin-bar-root-default,
+#wpadminbar #wp-admin-bar-top-secondary { display: contents; }
+#wpadminbar #wp-admin-bar-jb-collapse  { order: 1; }
+#wpadminbar #wp-admin-bar-jb-path      { order: 2; }
+#wpadminbar #wp-admin-bar-my-account   { order: 3; margin-left: auto; }
+#wpadminbar #wp-admin-bar-new-content  { order: 4; }
+#wpadminbar #wp-admin-bar-site-name    { order: 5; }
+
+/* ---------- breadcrumb, in the bar (Payload's "CM / Dashboard") ---------- */
+
+#wpadminbar #wp-admin-bar-jb-path > .ab-item {
+	display: flex !important;
+	align-items: center;
+	gap: 1px;
+	height: 32px;
+	padding: 0 0 0 6px !important;
+	background: transparent !important;
+	font-size: 13px;
+	line-height: 1;
+}
+/* the one spot Payload uses the brand colour */
+.jb-path__mark {
+	color: #ea832e !important;
+	font-weight: 700;
+	letter-spacing: .02em;
+	text-decoration: none !important;
+	margin-right: 5px;
+	transition: opacity var(--jb-fast) var(--jb-ease);
+}
+.jb-path__mark:hover { opacity: .75; }
+#wpadminbar .jb-path__sep,
+#wpadminbar .jb-path__seg {
+	color: var(--jb-label) !important;
+	text-decoration: none !important;
+	font-weight: 400;
+}
+#wpadminbar .jb-path__seg--current { color: var(--jb-text) !important; }
+#wpadminbar a.jb-path__seg {
+	transition: color var(--jb-fast) var(--jb-ease);
+}
+#wpadminbar a.jb-path__seg:hover { color: var(--jb-text) !important; }
+#wpadminbar #wp-admin-bar-top-secondary > li { float: none; }
+#wpadminbar #wp-admin-bar-my-account > .ab-item { padding-right: 12px; }
+#wpadminbar #wp-admin-bar-my-account .avatar { margin-left: 6px; }
+
+#wp-admin-bar-jb-collapse .ab-item {
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+	height: 22px !important;
+	width: 26px !important;
+	padding: 0 !important;
+	margin: 5px 8px 0 6px;
+	background: var(--jb-box) !important;
+	border: 1px solid var(--jb-border) !important;
+	border-radius: var(--jb-radius) !important;
+	transition: border-color .12s ease;
+}
+#wp-admin-bar-jb-collapse .ab-item:hover {
+	border-color: var(--jb-border-selected) !important;
+}
+#wp-admin-bar-jb-collapse .jb-collapse-icon,
+#wp-admin-bar-jb-collapse .jb-collapse-icon:before,
+#wp-admin-bar-jb-collapse .jb-collapse-icon:after {
+	display: block;
+	width: 12px;
+	height: 1.5px;
+	background: var(--jb-label);
+	transition: background .12s ease;
+}
+#wp-admin-bar-jb-collapse .jb-collapse-icon {
+	position: relative;
+}
+#wp-admin-bar-jb-collapse .jb-collapse-icon:before,
+#wp-admin-bar-jb-collapse .jb-collapse-icon:after {
+	content: "";
+	position: absolute;
+	left: 0;
+}
+/* Hover brightens only the two bars that are always visible. The middle bar
+   is deliberately left out: in the open (X) state it is transparent, and
+   colouring it on hover turns the X into an asterisk. It gets its hover
+   colour back in the folded rules below, where it is actually shown. */
+#wp-admin-bar-jb-collapse .ab-item:hover .jb-collapse-icon:before,
+#wp-admin-bar-jb-collapse .ab-item:hover .jb-collapse-icon:after {
+	background: var(--jb-text);
+}
+
+/* Sidebar open -> "close" (X). Sidebar folded -> "open" (hamburger). */
+#wp-admin-bar-jb-collapse .jb-collapse-icon { background: transparent; }
+#wp-admin-bar-jb-collapse .jb-collapse-icon:before,
+#wp-admin-bar-jb-collapse .jb-collapse-icon:after {
+	top: 0;
+	transition: transform .15s ease, top .15s ease;
+}
+#wp-admin-bar-jb-collapse .jb-collapse-icon:before { transform: rotate(45deg); }
+#wp-admin-bar-jb-collapse .jb-collapse-icon:after  { transform: rotate(-45deg); }
+
+/* NOTE: WordPress puts `auto-fold` on <body> at every screen size — it only
+   actually folds inside a max-width media query. So the folded styling keys
+   off `.folded` alone, with `.auto-fold` handled in the same media query
+   WordPress uses. Targeting `.auto-fold` unscoped hides the menu always. */
+body.folded #wp-admin-bar-jb-collapse .jb-collapse-icon {
+	background: var(--jb-label);
+}
+body.folded #wp-admin-bar-jb-collapse .ab-item:hover .jb-collapse-icon {
+	background: var(--jb-text);
+}
+body.folded #wp-admin-bar-jb-collapse .jb-collapse-icon:before {
+	transform: none;
+	top: -4px;
+}
+body.folded #wp-admin-bar-jb-collapse .jb-collapse-icon:after {
+	transform: none;
+	top: 4px;
+}
+
+/* Closed sidebar: with the icons gone there is nothing useful to show in a
+   narrow strip, so collapse it away entirely and give the width to content. */
+body.folded #adminmenuback,
+body.folded #adminmenuwrap,
+body.folded #adminmenu {
+	width: 0 !important;
+	min-width: 0 !important;
+	overflow: hidden !important;
+	border-right: none !important;
+}
+body.folded #wpcontent,
+body.folded #wpfooter {
+	margin-left: 0 !important;
+}
+/* no stray blue highlight bleeding through while folding */
+body.folded #adminmenu li.current a.menu-top,
+body.folded #adminmenu .wp-has-current-submenu,
+body.folded #adminmenu .wp-submenu {
+	background: transparent !important;
+	box-shadow: none !important;
+}
+
+/* Tablet range only. Below 783px the mobile drawer block further down owns
+   the menu entirely — and `body.auto-fold #adminmenu` outranks the plain
+   `#adminmenu` selectors used there, so it must not reach into that range. */
+/* Tablet / small-window range (a phone in landscape lands here).
+   WordPress auto-folds to a 36px icon strip; with the icons removed that is
+   an unusable blank sliver, so keep the full menu instead. `body.folded`
+   still collapses it — and it must not be hidden unconditionally, or there
+   is no way to get the sidebar back at this width. */
+@media only screen and (min-width: 783px) and (max-width: 960px) {
+	body.auto-fold:not(.folded) #adminmenuback,
+	body.auto-fold:not(.folded) #adminmenuwrap,
+	body.auto-fold:not(.folded) #adminmenu {
+		width: 160px !important;
+		min-width: 160px !important;
+		overflow: visible !important;
+	}
+	body.auto-fold:not(.folded) #wpcontent,
+	body.auto-fold:not(.folded) #wpfooter { margin-left: 160px !important; }
+	body.auto-fold:not(.folded) #adminmenu li.menu-top { width: 100% !important; }
+	body.auto-fold:not(.folded) #adminmenu .wp-menu-name {
+		position: static !important;
+		left: auto !important;
+		display: block !important;
+	}
+}
+
+/* the real button stays in the DOM (it carries WordPress's persistence)
+   but is visually removed */
+#collapse-button {
+	width: 30px !important;
+	height: 30px !important;
+	background: var(--jb-box) !important;
+	border: 1px solid var(--jb-border) !important;
+	border-radius: var(--jb-radius) !important;
+	color: var(--jb-label) !important;
+	transition: border-color .12s ease, color .12s ease;
+}
+#collapse-button:hover {
+	border-color: var(--jb-border-selected) !important;
+	color: var(--jb-text) !important;
+}
+#collapse-button .collapse-button-label { display: none !important; }
+#collapse-button .collapse-button-icon { width: 28px !important; height: 28px !important; }
+/* swap WordPress's filled-circle dashicon for a plain chevron, so it matches
+   the section arrows; it points left when open, right when collapsed */
+#collapse-button .collapse-button-icon:after {
+	content: "" !important;
+	position: absolute;
+	top: 10px !important;
+	left: 11px;
+	width: 6px;
+	height: 6px;
+	border-left: 1.5px solid currentColor;
+	border-bottom: 1.5px solid currentColor;
+	transform: rotate(45deg);
+	font-size: 0 !important;
+	transition: transform .15s ease;
+}
+.folded #collapse-button .collapse-button-icon:after {
+	transform: rotate(-135deg);
+	left: 9px;
+}
+
+.wp-list-table .row-title { color: var(--jb-label); }
+.wp-list-table .row-title:hover { color: var(--jb-text); }
+.subsubsub a { color: var(--jb-label); }
+.subsubsub a:hover { color: var(--jb-text); }
+.subsubsub a.current { color: var(--jb-text); font-weight: 600; }
+
+/* ---------- boxes: fill never changes, only the border does ---------- */
+
+body.wp-admin .button,
+body.wp-admin .button-secondary,
+body.wp-admin .button-primary,
+body.wp-admin .cf-complex__group-action--add,
+input.cf-button,
+.page-title-action,
+#screen-meta-links .show-settings,
+.tablenav .tablenav-pages a,
+.tablenav .tablenav-pages span.current {
+	background: var(--jb-box) !important;
+	border: 1px solid var(--jb-border) !important;
+	color: var(--jb-text) !important;
+	border-radius: var(--jb-radius);
+	box-shadow: none;
+	text-shadow: none;
+	font-weight: 600;
+	transition: border-color .12s ease;
+}
+body.wp-admin .button:hover,
+body.wp-admin .button:focus,
+body.wp-admin .button-secondary:hover,
+body.wp-admin .button-primary:hover,
+.page-title-action:hover,
+#screen-meta-links .show-settings:hover,
+.tablenav .tablenav-pages a:hover {
+	background: var(--jb-box) !important;
+	border-color: var(--jb-border-selected) !important;
+	color: var(--jb-text) !important;
+}
+.tablenav .tablenav-pages span.current {
+	border-color: var(--jb-border-selected) !important;
+}
+
+body.wp-admin input[type="text"],
+body.wp-admin input[type="search"],
+body.wp-admin input[type="password"],
+body.wp-admin input[type="number"],
+body.wp-admin input[type="email"],
+body.wp-admin input[type="url"],
+body.wp-admin textarea,
+body.wp-admin select,
+body.wp-admin #titlediv #title {
+	background: var(--jb-box) !important;
+	border: 1px solid var(--jb-border) !important;
+	color: var(--jb-text) !important;
+	border-radius: var(--jb-radius);
+	box-shadow: none;
+}
+body.wp-admin input[type="text"],
+body.wp-admin input[type="search"],
+body.wp-admin input[type="password"],
+body.wp-admin input[type="number"],
+body.wp-admin input[type="email"],
+body.wp-admin input[type="url"],
+body.wp-admin select,
+body.wp-admin #titlediv #title {
+	padding-left: 16px;
+	padding-right: 16px;
+}
+body.wp-admin textarea { border-radius: var(--jb-radius); }
+body.wp-admin input:focus,
+body.wp-admin textarea:focus,
+body.wp-admin select:focus {
+	background: var(--jb-box) !important;
+	border-color: var(--jb-border-selected) !important;
+	box-shadow: none !important;
+	outline: none;
+}
+body.wp-admin ::placeholder { color: var(--jb-label); opacity: 1; }
+
+.postbox,
+#poststuff .postbox,
+.stuffbox,
+.cf-container,
+.cf-container__fields,
+.notice, div.updated, div.error,
+body.wp-admin #screen-meta,
+.cf-complex__group,
+.cf-complex__group-head {
+	background: var(--jb-box) !important;
+	border: 1px solid var(--jb-border) !important;
+	border-radius: var(--jb-radius);
+	box-shadow: none;
+	color: var(--jb-text) !important;
+}
+.postbox .postbox-header,
+.postbox > h2,
+.postbox > .hndle {
+	background: transparent !important;
+	border-bottom: 1px solid var(--jb-border);
+	color: var(--jb-text) !important;
+}
+.postbox .postbox-header h2,
+.postbox .hndle,
+.postbox .handlediv,
+.postbox .inside {
+	background: transparent !important;
+	border: none;
+	color: var(--jb-text) !important;
+}
+.notice, div.updated, div.error {
+	border-left: 1px solid var(--jb-border) !important;
+}
+
+.cf-container__tabs,
+.cf-container__tabs-list,
+.cf-container__tabs-item,
+.cf-complex__tabs-item,
+h2.nav-tab-wrapper,
+.nav-tab-wrapper,
+.nav-tab {
+	background: transparent !important;
+	border: none !important;
+}
+.cf-container__tabs-item,
+.cf-complex__tabs-item,
+.nav-tab {
+	background: var(--jb-box) !important;
+	border: 1px solid var(--jb-border) !important;
+	color: var(--jb-label) !important;
+	border-radius: var(--jb-radius) !important;
+	margin: 0 6px 6px 0 !important;
+	padding: 6px 16px !important;
+	font-weight: 600;
+}
+.cf-container__tabs-item--current,
+.cf-complex__tabs-item--current,
+.nav-tab-active {
+	border-color: var(--jb-border-selected) !important;
+	color: var(--jb-text) !important;
+}
+.cf-field__label,
+.cf-field label,
+.cf-field__help,
+.cf-field .description,
+p.description,
+span.description,
+.form-wrap p.description {
+	color: var(--jb-text) !important;
+}
+.cf-text__input,
+.cf-textarea__input,
+.cf-select__input,
+.cf-file__inner,
+.cf-association__bar,
+.cf-association__col {
+	background: var(--jb-box) !important;
+	border: 1px solid var(--jb-border) !important;
+	color: var(--jb-text) !important;
+	border-radius: var(--jb-radius) !important;
+}
+
+/* Carbon Fields draws all of its internal dividers in #e2e4e7 — near-white,
+   which reads as a heavy bright line on a dark background. Repaint every one
+   of them, and drop the light fills that come with them. */
+.cf-container [class^="cf-"],
+.cf-container [class*=" cf-"],
+.cf-complex__group-head,
+.cf-complex__group-body,
+.cf-complex__group-index,
+.cf-association__cols,
+.cf-association__option + .cf-association__option,
+.cf-media-gallery__inner,
+.cf-media-gallery__item-inner,
+.cf-media-gallery__item-name,
+.cf-media-gallery__actions {
+	border-color: var(--jb-border) !important;
+}
+.cf-complex__group-head,
+.cf-complex__group-body,
+.cf-association__cols,
+.cf-media-gallery__item-name {
+	background-color: var(--jb-box) !important;
+	color: var(--jb-text) !important;
+}
+.cf-association__cols:before { background-color: var(--jb-border) !important; }
+.cf-complex__group-placeholder:before { border-color: var(--jb-border) !important; }
+/* repeater row action icons — labels, not boxes */
+.cf-complex__group-actions--tabbed { background-color: var(--jb-box) !important; }
+.cf-complex__group-action {
+	background: transparent !important;
+	border: none !important;
+	color: var(--jb-label) !important;
+}
+.cf-complex__group-action:hover { color: var(--jb-text) !important; }
+.cf-complex__group-action svg { fill: currentColor; }
+
+/* Tables: no outer frame, no per-cell rules — just a hairline between rows. */
+.wp-list-table {
+	background: transparent !important;
+	color: var(--jb-text);
+	border: none !important;
+	border-radius: 0;
+	border-collapse: collapse;
+	box-shadow: none;
+}
+.wp-list-table th,
+.wp-list-table td {
+	border: none !important;
+	border-bottom: 1px solid var(--jb-border) !important;
+	background: transparent !important;
+	color: var(--jb-text);
+}
+.wp-list-table thead th,
+.wp-list-table thead td,
+.wp-list-table tfoot th,
+.wp-list-table tfoot td {
+	color: var(--jb-label);
+	font-weight: 700;
+	text-transform: uppercase;
+	font-size: 11px;
+	letter-spacing: .04em;
+}
+.wp-list-table tfoot th,
+.wp-list-table tfoot td { border-bottom: none !important; }
+.wp-list-table tbody tr:last-child td { border-bottom: none !important; }
+.wp-list-table tbody tr:hover td { background: var(--jb-box) !important; }
+.striped > tbody > :nth-child(odd),
+ul.striped > :nth-child(odd) { background: transparent !important; }
+
+#major-publishing-actions,
+#minor-publishing-actions,
+.submitbox .submit {
+	background: transparent !important;
+	border-color: var(--jb-border) !important;
+}
+
+/* ---------- scrollbar (webkit only) ---------- */
+
+body.wp-admin input[type="checkbox"],
+body.wp-admin input[type="radio"],
+body.wp-admin .cf-checkbox__input {
+	accent-color: var(--jb-text);
+}
+
+body.wp-admin ::-webkit-scrollbar { width: 10px; height: 10px; }
+body.wp-admin ::-webkit-scrollbar-track { background: var(--jb-bg); }
+body.wp-admin ::-webkit-scrollbar-thumb { background: var(--jb-border); border-radius: 6px; }
+
+/* ---------- page path breadcrumb ---------- */
+
+/* The <h1> is kept for screen readers but taken out of the visual flow;
+   the path below replaces it. `.page-title-action` (the "Add New" button)
+   is a sibling, so it stays visible. */
+.wrap > h1,
+.wrap > h1.wp-heading-inline,
+.wrap > h2.hndle {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* The breadcrumb now lives in the admin bar (see "breadcrumb, in the bar"
+   above), matching Payload's header. Nothing renders it in the content area
+   any more, so only the first dashboard heading needs its top margin trimmed. */
+
+/* ---------- custom dashboard grid ---------- */
+
+#dashboard-widgets-wrap #jbnewgen_dashboard,
+#dashboard-widgets-wrap #jbnewgen_dashboard .inside {
+	background: transparent !important;
+	border: none !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	border-radius: 0;
+}
+#jbnewgen_dashboard .postbox-header { display: none !important; }
+/* WordPress insets widget columns by 8px; zeroing it lines the cards up with
+   the path box and everything else in #wpbody-content. */
+#dashboard-widgets .postbox-container {
+	width: 100% !important;
+	padding: 0 !important;
+}
+#dashboard-widgets .meta-box-sortables,
+#dashboard-widgets .postbox {
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+}
+/* the box must never end up collapsed */
+#jbnewgen_dashboard.closed .inside { display: block !important; }
+#dashboard-widgets-wrap { margin: 0 !important; }
+.index-php #wpbody-content .metabox-holder { padding-top: 0; }
+
+.jb-dash__heading {
+	/* Payload %h2: font-size base(1.3)=26px, line-height base(1.6)=32px,
+	   and every heading level is weight 500 — not 700. */
+	/* WordPress styles dashboard <h2> more specifically than a bare class
+	   (it computed 23px = 1.3em), so these need to be forced. */
+	margin: 32px 0 14px;
+	font-size: 26px !important;
+	line-height: 32px !important;
+	font-weight: 500 !important;
+	letter-spacing: 0;
+	color: var(--jb-text) !important;
+}
+.jb-dash__heading:first-child { margin-top: 8px; }
+
+/* Two columns everywhere. Previously this was auto-fill, so the width of the
+   viewport decided the column count — Site ended up five across while every
+   other section sat at two, which is what looked inconsistent. Capping the
+   grid keeps the cards a sane width instead of stretching them half-screen. */
+.jb-dash__grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px; /* Payload .card gap: base(0.8) */
+	max-width: 640px;
+}
+
+/* Payload's .card, matched value for value:
+   background elevation-50, padding base(0.8)=16px, min-height base(4)=80px,
+   gap base(0.8)=16px, radius-m, 1px border, flex + space-between. */
+.jb-dash__card {
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+	align-self: start;
+	/* Payload sets `* { box-sizing: border-box }`. Without it min-height is
+	   read as the CONTENT box, so an 80px card rendered at 114px
+	   (80 + 32 padding + 2 border). Measured, not guessed. */
+	box-sizing: border-box;
+	gap: 16px;
+	min-height: 80px;
+	padding: 16px;
+	background: var(--jb-box);
+	border: 1px solid var(--jb-border);
+	border-radius: var(--jb-radius);
+	transition-property: border-color, box-shadow, background;
+	transition-duration: var(--jb-fast);
+	transition-timing-function: var(--jb-ease);
+}
+.jb-dash__card:hover { border-color: var(--jb-border-selected); }
+
+/* Payload .card__title: h5, weight 600, line-height base(0.8), margin base(0.1) 0 */
+.jb-dash__card-link {
+	color: var(--jb-text) !important;
+	font-weight: 600;
+	font-size: 13px;
+	line-height: 16px;
+	letter-spacing: 0;
+	margin: 2px 0;
+	width: 100%;
+	text-decoration: none !important;
+}
+/* let the whole card be the click target for the main link */
+.jb-dash__card-link:before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: var(--jb-radius);
+}
+
+/* Payload .card__actions .btn__icon — sits in flow (not absolute), and on
+   hover takes elevation-500 plus the elevation-0 fill. */
+.jb-dash__add {
+	position: relative;
+	z-index: 2;
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	border: 1px solid var(--jb-border);
+	border-radius: 50%;
+	color: var(--jb-label) !important;
+	font-size: 14px;
+	line-height: 1;
+	text-decoration: none !important;
+	transition-property: border-color, box-shadow, color, background;
+	transition-duration: var(--jb-fast);
+	transition-timing-function: var(--jb-ease);
+}
+.jb-dash__add:hover {
+	border-color: var(--jb-border-strong);
+	background-color: var(--jb-bg);
+	color: var(--jb-text) !important;
+	box-shadow: 0 2px 2px -1px rgba(0, 0, 0, .1);
+}
+
+/* ---------- mobile (WordPress's own admin breakpoint) ---------- */
+
+@media screen and (max-width: 782px) {
+
+	/* two compact cards per row, like the reference */
+	.jb-dash__grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 12px;
+	}
+	.jb-dash__card {
+		min-height: 84px;
+		padding: 14px;
+	}
+	.jb-dash__card-link {
+		font-size: 13px;
+		line-height: 1.35;
+		padding-right: 8px;
+	}
+	/* the "+" joins the flow instead of being pinned, so it sits beside the
+	   label and cannot overlap a wrapped two-line title */
+	.jb-dash__add {
+		position: static;
+		flex: 0 0 auto;
+		margin-left: auto;
+	}
+	.jb-dash__heading {
+		/* Payload %h2 at its small breakpoint: base(0.85) = 17px */
+		font-size: 17px !important;
+		line-height: 24px !important;
+		margin: 22px 0 10px;
+	}
+	.jb-dash__heading:first-child { margin-top: 4px; }
+	.wrap h1.wp-heading-inline,
+	.wrap h1 { font-size: 20px; }
+
+	/* Nothing in the content chain may exceed the viewport. WordPress sizes
+	   several of these for a desktop sidebar, which pushed the second grid
+	   column off the right edge. */
+	#wpwrap,
+	#wpcontent,
+	#wpbody,
+	#wpbody-content,
+	#wpbody-content > .wrap,
+	#dashboard-widgets-wrap,
+	#dashboard-widgets,
+	#dashboard-widgets .postbox-container,
+	#dashboard-widgets .postbox,
+	#dashboard-widgets .postbox .inside,
+	.jb-dash__grid {
+		max-width: 100% !important;
+		min-width: 0 !important;
+		box-sizing: border-box;
+	}
+	#wpcontent {
+		margin-left: 0 !important;
+		padding-left: 12px !important;
+		padding-right: 12px !important;
+	}
+	#wpbody-content { padding-left: 0; padding-right: 0; }
+	html, body#wpwrap, body { overflow-x: hidden; }
+
+	.jb-path { max-width: 100%; }
+
+	/* Admin bar: WordPress switches to large touch targets here, which made
+	   the labels run off-screen and clip ("ac"). Icons only, ~70% size. */
+	#wpadminbar #wp-admin-bar-site-name .ab-label,
+	#wpadminbar #wp-admin-bar-new-content .ab-label,
+	#wpadminbar #wp-admin-bar-my-account .display-name {
+		display: none !important;
+	}
+	/* Icons scaled to ~70% and every item centred on one baseline. The bar's
+	   own height is left alone on purpose: WordPress reserves matching
+	   padding-top on <html>, so overriding one without the other drops the
+	   content up under the bar. */
+	/* Centre each item without touching WordPress's icon metrics — the
+	   dashicons rely on their own line-height/height, and overriding those
+	   squashes the glyphs. */
+	/* Centre on the bar using line-height, the way WordPress does it. Making
+	   .ab-item a flex container turns the icon :before into a flex item and
+	   the dashicon ends up clipped to a sliver. */
+	/* The toggle is excluded: :not() counts its argument's specificity, so an
+	   ID inside :not() would let this rule outrank the toggle's own sizing. */
+	#wpadminbar .ab-top-menu > li:not(#wp-admin-bar-menu-toggle):not(#wp-admin-bar-jb-collapse) > .ab-item {
+		display: block !important;
+		height: 46px !important;
+		line-height: 46px !important;
+		padding: 0 2px !important;
+	}
+
+	/* The drawer spans the full height, so its right edge was cutting straight
+	   through the avatar. Keep the bar opaque and above it. */
+	#wpadminbar {
+		z-index: 100001 !important;
+		background: var(--jb-bg) !important;
+	}
+	#adminmenumain,
+	#adminmenuback,
+	#adminmenuwrap { z-index: 99990 !important; }
+
+	/* No divider at this size any more — the nav covers the full viewport,
+	   so there is no seam between it and the content to mark. */
+	.wp-responsive-open #adminmenuback,
+	.wp-responsive-open #adminmenuwrap,
+	.wp-responsive-open #adminmenu {
+		border-right: none !important;
+	}
+	#wpadminbar .ab-icon:before,
+	#wpadminbar .ab-item:before {
+		font-size: 24px !important;
+		width: 24px !important;
+		height: 46px !important;
+		line-height: 46px !important;
+		display: inline-block !important;
+		vertical-align: top !important;
+		top: 0 !important;
+		margin: 0 !important;
+		padding: 0 !important;
+	}
+	#wpadminbar #wp-admin-bar-my-account > .ab-item { padding-right: 2px !important; }
+	#wpadminbar #wp-admin-bar-my-account .avatar { vertical-align: middle !important; }
+	#wpadminbar #wp-admin-bar-my-account .avatar {
+		display: block !important;
+		width: 26px !important;
+		height: 26px !important;
+		margin: 0;
+	}
+	/* On mobile the icon reflects the drawer, not the desktop fold: closed is
+	   a hamburger, open is an X. Driven by `jb-drawer-open` on <body> because
+	   #wpadminbar sits outside #wpwrap, where WordPress keeps its own class. */
+	#wp-admin-bar-jb-collapse .jb-collapse-icon { background: var(--jb-label); }
+	#wp-admin-bar-jb-collapse .jb-collapse-icon:before { transform: none; top: -4px; }
+	#wp-admin-bar-jb-collapse .jb-collapse-icon:after  { transform: none; top: 4px; }
+
+	body.jb-drawer-open #wp-admin-bar-jb-collapse .jb-collapse-icon {
+		background: transparent;
+	}
+	body.jb-drawer-open #wp-admin-bar-jb-collapse .jb-collapse-icon:before {
+		transform: rotate(45deg);
+		top: 0;
+	}
+	body.jb-drawer-open #wp-admin-bar-jb-collapse .jb-collapse-icon:after {
+		transform: rotate(-45deg);
+		top: 0;
+	}
+
+	/* re-asserted after the generic .ab-item sizing above */
+	#wpadminbar #wp-admin-bar-jb-collapse > .ab-item {
+		display: flex !important;
+		align-items: center;
+		justify-content: center;
+		height: 28px !important;
+		line-height: 28px !important;
+		width: 32px !important;
+		margin: 9px 4px 0 8px !important;
+		padding: 0 !important;
+	}
+
+	/* WordPress's own responsive hamburger — ours replaces it */
+	#wpadminbar #wp-admin-bar-menu-toggle { display: none !important; }
+
+	/* ...but WordPress also hides every other root-default item at this
+	   breakpoint, which took our toggle with it. Put ours back. */
+	#wpadminbar ul#wp-admin-bar-root-default > li#wp-admin-bar-jb-collapse,
+	#wpadminbar ul#wp-admin-bar-root-default > li#wp-admin-bar-new-content,
+	#wpadminbar ul#wp-admin-bar-root-default > li#wp-admin-bar-site-name {
+		display: block !important;
+	}
+
+	/* Sidebar: hidden by default, slides in when opened. WordPress toggles
+	   `wp-responsive-open` on #wpwrap for this breakpoint (not `folded` on body).
+	   #adminmenumain is the outer wrapper — leaving it out was what kept a
+	   dead column of space to the left of the content. */
+	/* The drawer overlays the content rather than pushing it: #adminmenumain
+	   comes out of normal flow and slides in on transform, so #wpcontent
+	   never moves. */
+	/* Payload sets `--nav-width: 100vw` at its small breakpoint, so the mobile
+	   nav is a full-screen overlay rather than a partial drawer. Matching that
+	   also removes the sliver of content that used to sit alongside it. */
+	#adminmenumain {
+		position: fixed !important;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		width: 100vw !important;
+		min-width: 100vw !important;
+		padding-top: 46px; /* clear the admin bar, which paints above it */
+		background: var(--jb-bg) !important;
+		z-index: 99990 !important;
+		overflow-y: auto !important;
+		overflow-x: hidden !important;
+		transform: translateX(-100%);
+		transition: transform var(--jb-med) var(--jb-ease);
+	}
+	#adminmenuback,
+	#adminmenuwrap,
+	#adminmenu {
+		width: 100vw !important;
+		min-width: 100vw !important;
+		overflow: visible !important;
+		border-right: none !important;
+	}
+	.wp-responsive-open #adminmenumain { transform: none; }
+	#wpcontent,
+	#wpfooter { margin-left: 0 !important; }
+	.wp-responsive-open #adminmenu a.menu-top,
+	.wp-responsive-open #adminmenu .wp-submenu a {
+		font-size: 15px;
+		padding-top: 10px !important;
+		padding-bottom: 10px !important;
+	}
+	.wp-responsive-open #adminmenu li.jb-menu-section > a {
+		font-size: 10px;
+		padding-top: 18px !important;
+		padding-bottom: 6px !important;
+	}
+	.wp-responsive-open #adminmenu .wp-submenu {
+		position: static !important;
+		width: auto !important;
+		background: transparent !important;
+		border: none !important;
+		box-shadow: none !important;
+	}
+}
+
+/* ---------- block editor (Gutenberg) ----------
+   The editor ships its own light palette driven by CSS custom properties.
+   Repointing those covers most of the surface in one go; the rest are the
+   few panels that hardcode white. */
+
+body.block-editor-page,
+.block-editor-page #wpwrap,
+.block-editor-page #wpcontent,
+.block-editor-page #editor,
+.edit-post-layout,
+.editor-editor-interface,
+.interface-interface-skeleton,
+.interface-interface-skeleton__body,
+.interface-interface-skeleton__content,
+.interface-interface-skeleton__header,
+.interface-interface-skeleton__footer,
+.interface-interface-skeleton__sidebar,
+.interface-interface-skeleton__secondary-sidebar,
+.interface-complementary-area,
+.editor-header,
+.edit-post-header,
+.editor-sidebar,
+.components-panel,
+.components-panel__body,
+.components-panel__header,
+.editor-post-panel__section,
+.block-editor-block-inspector,
+.block-editor-inserter__menu,
+.block-editor-list-view-tree,
+.editor-document-tools,
+.editor-visual-editor,
+.block-editor-iframe__body,
+.editor-styles-wrapper,
+.block-editor-writing-flow {
+	background-color: var(--jb-bg) !important;
+	color: var(--jb-text) !important;
+}
+
+.interface-interface-skeleton__header,
+.interface-interface-skeleton__sidebar,
+.interface-interface-skeleton__secondary-sidebar,
+.interface-complementary-area,
+.editor-header,
+.components-panel__body,
+.components-panel__header,
+.editor-post-panel__section,
+.editor-post-panel__row {
+	border-color: var(--jb-border) !important;
+}
+
+/* the document-title pill in the header, and the footer breadcrumb bar */
+.editor-document-bar,
+.editor-document-bar__command,
+.editor-document-bar__title,
+.editor-footer,
+.editor-editor-interface .interface-interface-skeleton__footer,
+.block-editor-block-breadcrumb,
+.edit-post-layout__footer {
+	background: var(--jb-box) !important;
+	border-color: var(--jb-border) !important;
+	color: var(--jb-text) !important;
+	border-radius: var(--jb-radius);
+	box-shadow: none !important;
+}
+.editor-editor-interface .interface-interface-skeleton__footer,
+.block-editor-block-breadcrumb { border-radius: 0; }
+.block-editor-block-breadcrumb__button,
+.block-editor-block-breadcrumb__item { color: var(--jb-text) !important; }
+
+/* text inside the editor chrome */
+.block-editor-page .components-panel__body-title,
+.block-editor-page .components-panel__body-toggle,
+.block-editor-page .components-base-control__label,
+.block-editor-page .editor-post-panel__row-label,
+.block-editor-page .components-truncate,
+.block-editor-page .components-text,
+.block-editor-page h2,
+.block-editor-page h3,
+.editor-post-title__input,
+.editor-styles-wrapper,
+.block-editor-block-list__layout {
+	color: var(--jb-text) !important;
+}
+.editor-post-title__input::placeholder,
+.block-editor-default-block-appender__content { color: var(--jb-label) !important; }
+
+/* buttons in the editor follow the same box rules as the rest of the admin */
+.block-editor-page .components-button.is-primary,
+.block-editor-page .components-button.is-secondary,
+.block-editor-page .components-button.is-tertiary {
+	background: var(--jb-box) !important;
+	border: 1px solid var(--jb-border) !important;
+	color: var(--jb-text) !important;
+	border-radius: var(--jb-radius) !important;
+	box-shadow: none !important;
+}
+.block-editor-page .components-button.is-primary:hover,
+.block-editor-page .components-button.is-secondary:hover,
+.block-editor-page .components-button.is-tertiary:hover {
+	border-color: var(--jb-border-selected) !important;
+	color: var(--jb-text) !important;
+}
+.block-editor-page .components-button {
+	color: var(--jb-text);
+	border-radius: var(--jb-radius);
+}
+.block-editor-page .components-button:not(.is-primary):not(.is-secondary):not(.is-tertiary):hover {
+	background: var(--jb-box) !important;
+	color: var(--jb-text) !important;
+}
+
+/* inputs, dropdowns and popovers inside the editor */
+.block-editor-page .components-text-control__input,
+.block-editor-page .components-textarea-control__input,
+.block-editor-page .components-select-control__input,
+.block-editor-page .components-input-control__input,
+.block-editor-page .components-popover__content,
+.block-editor-page .components-dropdown-menu__menu,
+.block-editor-page .components-menu-group {
+	background: var(--jb-box) !important;
+	border-color: var(--jb-border) !important;
+	color: var(--jb-text) !important;
+	border-radius: var(--jb-radius) !important;
+}
+.block-editor-page .components-menu-item__button:hover {
+	background: var(--jb-bg) !important;
+	color: var(--jb-text) !important;
+}
+
+/* ---------- motion & polish ----------
+   Deliberately restrained: short durations, one easing curve, no scaling or
+   bouncing. Box fills never change on hover (only borders and small nudges),
+   so this stays consistent with the rest of the theme. */
+
+@keyframes jb-rise {
+	from { opacity: 0; transform: translateY(6px); }
+	to   { opacity: 1; transform: none; }
+}
+
+/* dashboard: headings and cards ease in with a light stagger */
+/* `backwards`, not `both`: a finished animation with `forwards`/`both` keeps
+   the animated property under animation control, and animations outrank
+   :hover in the cascade — which would silently kill the card lift below. */
+.jb-dash__heading,
+.jb-dash__card {
+	animation: jb-rise var(--jb-med) var(--jb-ease) backwards;
+}
+.jb-dash__grid > .jb-dash__card:nth-child(1) { animation-delay: .02s; }
+.jb-dash__grid > .jb-dash__card:nth-child(2) { animation-delay: .05s; }
+.jb-dash__grid > .jb-dash__card:nth-child(3) { animation-delay: .08s; }
+.jb-dash__grid > .jb-dash__card:nth-child(4) { animation-delay: .11s; }
+.jb-dash__grid > .jb-dash__card:nth-child(5) { animation-delay: .14s; }
+.jb-dash__grid > .jb-dash__card:nth-child(n+6) { animation-delay: .17s; }
+
+.jb-dash__card {
+	transition:
+		border-color var(--jb-fast) var(--jb-ease),
+		transform var(--jb-fast) var(--jb-ease);
+}
+.jb-dash__card:hover { transform: translateY(-2px); }
+.jb-dash__card:active { transform: translateY(0); }
+.jb-dash__add {
+	transition:
+		border-color var(--jb-fast) var(--jb-ease),
+		color var(--jb-fast) var(--jb-ease),
+		transform var(--jb-fast) var(--jb-ease);
+}
+/* a "+" rotated 90deg is identical, so the affordance is colour, not motion */
+.jb-dash__card:hover .jb-dash__add {
+	border-color: var(--jb-border-selected);
+	color: var(--jb-text) !important;
+}
+
+/* sidebar: links nudge slightly and brighten */
+#adminmenu a.menu-top,
+#adminmenu .wp-submenu a {
+	transition:
+		color var(--jb-fast) var(--jb-ease),
+		padding-left var(--jb-fast) var(--jb-ease);
+}
+#adminmenu li:not(.jb-menu-section) > a.menu-top:hover,
+#adminmenu .wp-submenu a:hover {
+	padding-left: 22px !important;
+}
+#adminmenu li.jb-menu-section > a { transition: color var(--jb-fast) var(--jb-ease); }
+#adminmenu li.jb-menu-section > a:after { transition: transform var(--jb-med) var(--jb-ease); }
+
+/* sidebar open/close glides instead of snapping */
+#adminmenuback,
+#adminmenuwrap,
+#adminmenu,
+#wpcontent,
+#wpfooter {
+	transition:
+		width var(--jb-med) var(--jb-ease),
+		margin-left var(--jb-med) var(--jb-ease);
+}
+
+/* boxes: borders fade, buttons lift a hair */
+body.wp-admin .button,
+body.wp-admin .button-secondary,
+body.wp-admin .button-primary,
+.page-title-action,
+#screen-meta-links .show-settings,
+.tablenav .tablenav-pages a {
+	transition:
+		border-color var(--jb-fast) var(--jb-ease),
+		color var(--jb-fast) var(--jb-ease),
+		transform var(--jb-fast) var(--jb-ease);
+}
+body.wp-admin .button:hover,
+body.wp-admin .button-secondary:hover,
+body.wp-admin .button-primary:hover,
+.page-title-action:hover {
+	transform: translateY(-1px);
+}
+body.wp-admin .button:active,
+body.wp-admin .button-secondary:active,
+body.wp-admin .button-primary:active,
+.page-title-action:active {
+	transform: translateY(0);
+}
+
+body.wp-admin input[type="text"],
+body.wp-admin input[type="search"],
+body.wp-admin input[type="password"],
+body.wp-admin input[type="number"],
+body.wp-admin input[type="email"],
+body.wp-admin input[type="url"],
+body.wp-admin textarea,
+body.wp-admin select,
+.cf-text__input,
+.cf-textarea__input,
+.cf-select__input {
+	transition: border-color var(--jb-fast) var(--jb-ease);
+}
+
+/* postboxes and tabs */
+.postbox,
+.cf-container__tabs-item,
+.nav-tab {
+	transition: border-color var(--jb-fast) var(--jb-ease);
+}
+.cf-container__tabs-item:hover,
+.nav-tab:hover { border-color: var(--jb-border-selected) !important; }
+
+/* table rows */
+.wp-list-table tbody tr td { transition: background var(--jb-fast) var(--jb-ease); }
+
+/* keyboard focus stays visible without adding chrome for mouse users */
+body.wp-admin a:focus-visible,
+body.wp-admin button:focus-visible,
+body.wp-admin .button:focus-visible,
+.jb-dash__card-link:focus-visible,
+.jb-dash__add:focus-visible {
+	outline: 1px solid var(--jb-text);
+	outline-offset: 2px;
+	border-radius: var(--jb-radius);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	body.wp-admin *,
+	body.wp-admin *::before,
+	body.wp-admin *::after {
+		animation-duration: .01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: .01ms !important;
+		scroll-behavior: auto !important;
+	}
+	.jb-dash__card:hover { transform: none; }
+}
+
+/* ---------- login screen ---------- */
+
+body.login { background: var(--jb-bg); }
+body.login #login { width: 360px; }
+body.login #login h1 { display: none; }
+body.login form,
+body.login #login form {
+	background: var(--jb-box);
+	border: 1px solid var(--jb-border);
+	border-radius: var(--jb-radius);
+	box-shadow: none;
+	padding: 26px 24px 26px;
+	margin-top: 60px;
+}
+body.login label { color: var(--jb-text); }
+body.login form .input,
+body.login input[type="text"],
+body.login input[type="password"] {
+	background: var(--jb-bg);
+	border: 1px solid var(--jb-border);
+	color: var(--jb-text);
+	box-shadow: none;
+	border-radius: var(--jb-radius);
+	padding-left: 16px;
+	padding-right: 16px;
+}
+body.login form .input:focus,
+body.login input[type="text"]:focus,
+body.login input[type="password"]:focus {
+	border-color: var(--jb-border-selected);
+	box-shadow: none;
+}
+body.login .button-primary {
+	background: var(--jb-box) !important;
+	border: 1px solid var(--jb-border) !important;
+	color: var(--jb-text) !important;
+	text-shadow: none;
+	box-shadow: none;
+	border-radius: var(--jb-radius);
+	font-weight: 600;
+}
+body.login .button-primary:hover,
+body.login .button-primary:focus {
+	border-color: var(--jb-border-selected) !important;
+}
+body.login form#loginform .forgetmenot label,
+body.login .privacy-policy-page-link,
+body.login #nav a,
+body.login #backtoblog a {
+	color: var(--jb-label);
+}
+body.login #nav a:hover,
+body.login #backtoblog a:hover { color: var(--jb-text); }
+body.login #login_error,
+body.login .message,
+body.login .success {
+	background: var(--jb-box);
+	border: 1px solid var(--jb-border);
+	border-left: 1px solid var(--jb-border);
+	color: var(--jb-text);
+	border-radius: var(--jb-radius);
+}
+
+/* ==========================================================================
+   NO SIDEBAR
+   The admin menu is removed entirely; navigation happens through the
+   dashboard cards and the path box. Placed last so it wins over every
+   earlier sidebar rule, including the ones inside media queries.
+   The menu is only hidden, not unregistered — WordPress still uses it to
+   resolve the current screen, and restoring the sidebar is a one-line revert.
+   ========================================================================== */
+
+#adminmenumain,
+#adminmenuback,
+#adminmenuwrap,
+#adminmenu,
+#collapse-menu,
+#wp-admin-bar-jb-collapse {
+	display: none !important;
+}
+
+#wpcontent,
+#wpfooter,
+#wpbody,
+body.folded #wpcontent,
+body.folded #wpfooter,
+body.auto-fold #wpcontent,
+body.auto-fold #wpfooter {
+	margin-left: 0 !important;
+}
+
+@media screen and (max-width: 782px) {
+	#wpcontent,
+	#wpfooter { margin-left: 0 !important; }
+}
+
+/* ---------- top bar: icons only, plus the path box ---------- */
+
+/* every remaining label is dropped; the buttons keep accessible names via
+   .screen-reader-text and the title attribute */
+#wpadminbar #wp-admin-bar-my-account .display-name,
+#wpadminbar #wp-admin-bar-site-name .ab-label,
+#wpadminbar #wp-admin-bar-new-content .ab-label {
+	display: none !important;
+}
+
+/* a globe reads as "the website" far better than a house */
+#wpadminbar #wp-admin-bar-site-name > .ab-item:before {
+	content: "\f11f" !important; /* dashicons-admin-site-alt3 */
+	top: 2px;
+}
+
+/* the path box */
+#wpadminbar #wp-admin-bar-jb-path { order: 1; }
+#wpadminbar #wp-admin-bar-jb-path > .ab-item {
+	display: inline-flex !important;
+	align-items: center;
+	gap: 1px;
+	height: 22px !important;
+	margin: 5px 0 0 12px;
+	padding: 0 10px !important;
+	background: var(--jb-box) !important;
+	border: 1px solid var(--jb-border);
+	border-radius: var(--jb-radius);
+	font-size: 12px;
+	line-height: 1;
+	transition: border-color var(--jb-fast) var(--jb-ease);
+}
+#wpadminbar #wp-admin-bar-jb-path > .ab-item:hover {
+	border-color: var(--jb-border-selected);
+	background: var(--jb-box) !important;
+}
+
+/* ==========================================================================
+   LAYOUT GUTTER, TEXT COLOUR, FOCUS
+   One gutter drives both the admin bar and the content, so the path box, the
+   headings and the cards all share a left edge, and nothing touches the
+   viewport edge. Measured before: path box sat at 12px, content at 22px, and
+   the globe at right=0 — which is why its hover state was being clipped.
+   ========================================================================== */
+
+:root { --jb-gutter: 5%; }
+
+/* native controls (selects, scrollbars, date pickers) follow the dark theme
+   instead of rendering as black-on-white */
+html { color-scheme: dark; }
+
+/* --- horizontal: one shared gutter --- */
+
+#wpadminbar #wp-toolbar {
+	padding-left: var(--jb-gutter) !important;
+	padding-right: var(--jb-gutter) !important;
+	box-sizing: border-box;
+}
+#wpcontent {
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+#wpbody-content {
+	padding-left: var(--jb-gutter) !important;
+	padding-right: var(--jb-gutter) !important;
+	padding-top: 32px !important;
+	padding-bottom: 64px !important;
+	box-sizing: border-box;
+}
+/* the path box no longer needs its own inset — the toolbar gutter positions it */
+#wpadminbar #wp-admin-bar-jb-path > .ab-item { margin-left: 0; }
+#wpbody-content > .wrap,
+#wpbody-content > .wrap > * { margin-left: 0; margin-right: 0; }
+
+/* --- vertical: a taller bar so the icon buttons aren't jammed at the edge --- */
+
+#wpadminbar,
+#wpadminbar .quicklinks > ul > li > a { height: 44px !important; }
+html.wp-toolbar { padding-top: 44px !important; }
+#wpadminbar .ab-top-menu > li > .ab-item,
+#wpadminbar .ab-item,
+#wpadminbar a.ab-item { height: 44px !important; line-height: 44px !important; }
+#wpadminbar #wp-admin-bar-jb-path > .ab-item {
+	height: 24px !important;
+	line-height: 1 !important;
+	margin-top: 10px;
+}
+#wpadminbar .ab-sub-wrapper { top: 44px; }
+
+/* --- no black text, anywhere --- */
+
+/* Everything in the content area is white by default; links keep their own
+   grey (set earlier) via the :not(a) exclusion, and <option> is left to
+   color-scheme so native menus stay legible. */
+#wpbody-content,
+#wpbody-content *:not(a):not(option):not(.jb-path__seg) {
+	color: var(--jb-text);
+}
+#wpbody-content .description,
+#wpbody-content .howto,
+#wpbody-content .cf-field__help {
+	color: var(--jb-label);
+}
+
+/* --- consistent type --- */
+
+#wpbody-content,
+#wpbody-content p,
+#wpbody-content td,
+#wpbody-content th,
+#wpbody-content label,
+#wpbody-content input,
+#wpbody-content select,
+#wpbody-content textarea,
+#wpbody-content .cf-field__label {
+	font-size: 13px;   /* Payload $baseline-body-size */
+}
+#wpbody-content .description,
+#wpbody-content .cf-field__help { font-size: 12px; }
+#wpbody-content h2:not(.jb-dash__heading) { font-size: 20px; line-height: 24px; font-weight: 500; }
+#wpbody-content h3 { font-size: 16px; line-height: 20px; font-weight: 500; }
+
+/* --- kill every blue: focus rings, tap flash, selection, checkboxes --- */
+
+body.wp-admin,
+body.wp-admin * { -webkit-tap-highlight-color: transparent; }
+
+body.wp-admin input,
+body.wp-admin select,
+body.wp-admin textarea,
+body.wp-admin [type="checkbox"],
+body.wp-admin [type="radio"] { accent-color: var(--jb-border-selected); }
+
+body.wp-admin a:focus,
+body.wp-admin button:focus,
+body.wp-admin input:focus,
+body.wp-admin select:focus,
+body.wp-admin textarea:focus,
+body.wp-admin .button:focus,
+body.wp-admin [type="checkbox"]:focus,
+body.wp-admin [type="radio"]:focus,
+#wpadminbar a:focus,
+.cf-text__input:focus,
+.cf-textarea__input:focus,
+.cf-select__input:focus {
+	box-shadow: none !important;
+	outline: none !important;
+	border-color: var(--jb-border-selected) !important;
+}
+/* keyboard users still get a visible ring — just not a blue one */
+body.wp-admin a:focus-visible,
+body.wp-admin button:focus-visible,
+body.wp-admin input:focus-visible,
+body.wp-admin select:focus-visible,
+body.wp-admin textarea:focus-visible,
+body.wp-admin .button:focus-visible {
+	outline: 1px solid var(--jb-text) !important;
+	outline-offset: 2px;
+}
+::selection { background: var(--jb-border-selected); color: var(--jb-text); }
+::-moz-selection { background: var(--jb-border-selected); color: var(--jb-text); }
+
+/* ==========================================================================
+   LIST & EDIT SCREENS
+   The reference screens have: a real page heading with a "Create New" button
+   beside it, a description line, a search bar in its own container, a striped
+   table, and grouped panels on edit screens. The <h1> had been hidden when the
+   breadcrumb replaced it — but the reference keeps both, so it comes back.
+   ========================================================================== */
+
+.wrap > h1,
+.wrap > h1.wp-heading-inline,
+#wpbody-content .wrap > h1 {
+	position: static !important;
+	width: auto;
+	height: auto;
+	margin: 0 12px 0 0;
+	padding: 0;
+	overflow: visible;
+	clip-path: none;
+	white-space: normal;
+	display: inline-block;
+	vertical-align: middle;
+	font-size: 32px !important;   /* Payload %h1: base(1.6) */
+	line-height: 36px !important; /* base(1.8) */
+	font-weight: 500 !important;
+	letter-spacing: -0.5px;
+	color: var(--jb-text) !important;
+}
+.wrap > h1 + .page-title-action,
+.page-title-action {
+	display: inline-block;
+	vertical-align: middle;
+	margin: 0 0 0 4px !important;
+	padding: 5px 12px !important;
+	font-size: 12px !important;
+	font-weight: 600;
+	line-height: 18px !important;
+	top: -4px;
+	position: relative;
+}
+/* the description line Payload shows under the heading */
+.jb-screen-desc {
+	margin: 8px 0 20px !important;
+	font-size: 13px;
+	color: var(--jb-label) !important;
+	max-width: 70ch;
+}
+.wrap > h1 ~ .wp-header-end + .jb-screen-desc { margin-top: 4px !important; }
+
+/* --- search / filter bar gets its own container --- */
+
+.wrap .search-box,
+.tablenav.top {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0 0 16px;
+	padding: 10px 12px;
+	background: var(--jb-box);
+	border: 1px solid var(--jb-border);
+	border-radius: var(--jb-radius);
+	box-sizing: border-box;
+}
+.tablenav.top { justify-content: flex-start; }
+.wrap .search-box { justify-content: flex-end; }
+.tablenav.top .tablenav-pages { margin-left: auto; }
+.tablenav .actions { padding: 0; }
+.tablenav.bottom {
+	margin-top: 14px;
+	padding: 0;
+	background: transparent;
+	border: none;
+}
+.tablenav.bottom .tablenav-pages { margin-left: auto; }
+.tablenav br.clear { display: none; }
+
+/* --- the table itself: striped rows, no heavy chrome --- */
+
+.wp-list-table {
+	border-radius: var(--jb-radius);
+	border-collapse: separate;
+	border-spacing: 0;
+	overflow: hidden;
+}
+.wp-list-table thead th,
+.wp-list-table thead td {
+	padding: 12px 12px !important;
+	font-size: 12px !important;
+	font-weight: 500 !important;
+	text-transform: none;
+	letter-spacing: 0;
+	color: var(--jb-label) !important;
+	background: transparent !important;
+	border-bottom: 1px solid var(--jb-border) !important;
+}
+.wp-list-table tbody td,
+.wp-list-table tbody th {
+	padding: 14px 12px !important;
+	font-size: 13px;
+	border-bottom: none !important;
+	background: transparent;
+}
+/* alternating bands rather than dividing lines, as in the reference */
+.wp-list-table tbody tr:nth-child(odd) > * { background: var(--jb-box); }
+.wp-list-table tbody tr:hover > * { background: #262629; }
+.wp-list-table tbody tr:nth-child(odd) > *:first-child { border-radius: var(--jb-radius) 0 0 var(--jb-radius); }
+.wp-list-table tbody tr:nth-child(odd) > *:last-child { border-radius: 0 var(--jb-radius) var(--jb-radius) 0; }
+.wp-list-table .row-title {
+	font-weight: 400;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+/* row actions are noise next to a clean list — reveal on hover only */
+.wp-list-table .row-actions {
+	color: var(--jb-label);
+	opacity: 0;
+	transition: opacity var(--jb-fast) var(--jb-ease);
+}
+.wp-list-table tr:hover .row-actions { opacity: 1; }
+
+/* --- edit screens: grouped panels --- */
+
+#poststuff .postbox,
+.cf-container {
+	margin-bottom: 16px;
+}
+#poststuff .postbox > .postbox-header,
+.postbox > .postbox-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	min-height: 44px;
+	padding: 0 16px;
+	background: var(--jb-box) !important;
+	border-bottom: 1px solid var(--jb-border) !important;
+}
+.postbox > .postbox-header h2,
+.postbox > .postbox-header .hndle {
+	padding: 0 !important;
+	font-size: 13px !important;
+	font-weight: 600 !important;
+	color: var(--jb-text) !important;
+	border: none !important;
+}
+.postbox .handle-actions .handlediv,
+.postbox .handle-actions button { color: var(--jb-label) !important; }
+.postbox .inside { padding: 16px !important; }
+
+/* --- fields: label above, control below, help under --- */
+
+.cf-field { margin-bottom: 18px; }
+.cf-field__head { margin-bottom: 6px; }
+.cf-field__label,
+.form-table th label,
+.form-wrap label {
+	display: block;
+	font-size: 13px !important;
+	font-weight: 500 !important;
+	color: var(--jb-text) !important;
+	margin-bottom: 6px;
+}
+.cf-field__help,
+.form-table td p.description,
+.form-wrap p.description {
+	display: block;
+	margin-top: 6px !important;
+	font-size: 12px !important;
+	font-style: normal !important;
+	color: var(--jb-label) !important;
+}
+.cf-text__input,
+.cf-textarea__input,
+.cf-select__input,
+.form-table input[type="text"],
+.form-table input[type="email"],
+.form-table input[type="url"],
+.form-table input[type="number"],
+.form-table select,
+.form-table textarea,
+.form-wrap input[type="text"],
+.form-wrap textarea {
+	width: 100%;
+	max-width: 100%;
+	padding: 9px 12px !important;
+	min-height: 38px;
+	box-sizing: border-box;
+}
+.form-table textarea,
+.cf-textarea__input { min-height: 96px; }
+
+/* term-edit and settings tables read as stacked fields, not a table */
+.form-table,
+.form-table tbody,
+.form-table tr,
+.form-table th,
+.form-table td { display: block; width: 100%; }
+.form-table th {
+	padding: 0 0 6px !important;
+	width: auto !important;
+	text-align: left;
+}
+.form-table td { padding: 0 0 18px !important; }
+.form-table tr { margin-bottom: 0; }
+
+/* file/upload rows (Payload shows these as bordered cards) */
+.cf-file__inner {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px !important;
+	min-height: 56px;
+}
+
+/* the repeated header row at the foot of a list table matches the top one */
+.wp-list-table tfoot th,
+.wp-list-table tfoot td {
+	padding: 12px 12px !important;
+	font-size: 12px !important;
+	font-weight: 500 !important;
+	text-transform: none !important;
+	letter-spacing: 0 !important;
+	color: var(--jb-label) !important;
+	background: transparent !important;
+	border-top: 1px solid var(--jb-border) !important;
+	border-bottom: none !important;
+}
+/* the description sits under the heading once JS has moved it there */
+.jb-screen-desc { display: block; }

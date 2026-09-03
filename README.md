@@ -12,15 +12,25 @@ Working rules for AI sessions → [`CLAUDE.md`](CLAUDE.md).
 
 ## Status
 
-**Phase 2 of 12 complete.** No PHP written yet.
+**Phase 4 of 12 built, awaiting client-review gate.** CPTs, taxonomy, and Carbon Fields
+options pages are in place; Phase 5 doesn't start until the admin has been clicked
+through and reviewed.
 
 | # | Phase | Status |
 |---|---|---|
 | 0 | Safety net — backup tags pushed | ✅ |
 | 1 | New repo | ✅ |
 | 2 | Context transfer | ✅ |
-| 3 | Local WordPress environment | next |
-| 4–12 | see [`CONTEXT.md`](CONTEXT.md) §10 | |
+| 3 | Local WordPress environment | ✅ |
+| 4 | Content model | built, review pending |
+| 5–12 | see [`CONTEXT.md`](CONTEXT.md) §10 | |
+
+## Local dev environment
+
+WordPress core lives at the repo root (gitignored — only `wp-content/themes/jbnewgen/`
+is tracked). No LocalWP/Docker GUI available in this environment, so the stack runs on
+a hand-wired PHP built-in server + MariaDB instead — see session notes for exact
+commands to restart it.
 
 ---
 
