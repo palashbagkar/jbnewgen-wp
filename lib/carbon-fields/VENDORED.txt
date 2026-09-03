@@ -1,0 +1,1 @@
+VERSION 3.6.11 — vendored from https://github.com/htmlburger/carbon-fields/releases/tag/v3.6.11 (source zip, no build step run — build/ ships pre-compiled from upstream). Runtime files only: core/, build/, languages/, config.php. No Composer needed — core/ has zero runtime deps, autoloaded by inc/carbon-fields.php.
