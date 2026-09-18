@@ -76,3 +76,9 @@ Thumbs.db
 
 # Local UI screenshots used while iterating on the admin.
 /.preview/
+
+# CSS build tooling. The theme ships the COMPILED assets/site.css; npm exists
+# only on a developer machine and never reaches the server (the deploy branch
+# is a subtree of the theme, so nothing at the repo root is published).
+/node_modules/
+/package-lock.json

@@ -1,0 +1,13 @@
+{
+  "name": "jbnewgen-wp-css-build",
+  "private": true,
+  "description": "Build tooling ONLY. Never deployed: the deploy branch is a subtree of wp-content/themes/jbnewgen, so nothing at the repo root reaches the server. The theme itself has no build step -- it ships the committed assets/site.css.",
+  "scripts": {
+    "css": "tailwindcss -i wp-content/themes/jbnewgen/assets/site.src.css -o wp-content/themes/jbnewgen/assets/site.css --minify",
+    "css:watch": "tailwindcss -i wp-content/themes/jbnewgen/assets/site.src.css -o wp-content/themes/jbnewgen/assets/site.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4",
+    "tailwindcss": "^4"
+  }
+}
