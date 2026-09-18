@@ -1,0 +1,279 @@
+/* Source stylesheet for the public site. NOT the file the browser loads.
+ *
+ * The Next.js site is built on Tailwind v4, and the brief is "keep the homepage
+ * design, colour scheme and organisation the same". Re-deriving that by hand in
+ * plain CSS would drift on every value, so the PHP templates reuse the same
+ * utility classes and this compiles them, once, into assets/site.css -- which
+ * IS committed and IS what ships.
+ *
+ * The server never runs npm. The build happens on a developer machine:
+ *
+ *   ./.wp-local/tailwind/build.sh
+ *
+ * Everything below the @source line is copied verbatim from
+ * ../jbnewgen/src/app/(frontend)/globals.css. Do not "tidy" the values --
+ * flame-500 #EA832E is the brand orange as of 2026-08-25 and the entire ramp
+ * is anchored to it.
+ */
+
+@import "tailwindcss";
+
+/* Scoped deliberately. A bare @source "../" would also crawl lib/ -- Slate and
+ * Carbon Fields, thousands of vendored files -- and every stray word in there
+ * that happens to look like a utility would be emitted into the bundle.
+ * Only the public templates use Tailwind; inc/ is the admin skin and is styled
+ * by admin.css instead.
+ *
+ * Classes assembled at runtime from PHP variables are invisible to this scan.
+ * Always write full literal class names in templates. */
+@source "../*.php";
+@source "../template-parts/**/*.php";
+
+
+@theme {
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display), var(--font-inter), ui-sans-serif, sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
+
+  --color-ink-50: #eef3fa;
+  --color-ink-100: #d6e0ee;
+  --color-ink-200: #adc0dc;
+  --color-ink-300: #7793b8;
+  --color-ink-400: #4a6690;
+  --color-ink-500: #294769;
+  --color-ink-600: #1a3556;
+  --color-ink-700: #122844;
+  --color-ink-800: #0A182F;
+  --color-ink-900: #0A182F;
+  --color-ink-950: #0A182F;
+
+  --color-flame-50: #fdf2e8;
+  --color-flame-100: #fce4d0;
+  --color-flame-200: #f9c69c;
+  --color-flame-300: #f5a767;
+  --color-flame-400: #f28f3d;
+  --color-flame-500: #EA832E;
+  --color-flame-600: #d56f1b;
+  --color-flame-700: #af5b17;
+  --color-flame-800: #884b18;
+  --color-flame-900: #6d3e18;
+
+  --color-azure-50: #e8f4ff;
+  --color-azure-100: #cfe8ff;
+  --color-azure-200: #a2d2ff;
+  --color-azure-300: #6bb8ff;
+  --color-azure-400: #38b6ff;
+  --color-azure-500: #0795fe;
+  --color-azure-600: #0270d8;
+  --color-azure-700: #0559ab;
+  --color-azure-800: #0a4a8a;
+  --color-azure-900: #0d3d70;
+
+  --color-signal-400: #f6474d;
+  --color-signal-500: #ef2027;
+  --color-signal-600: #d21620;
+  --color-signal-700: #af1119;
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+
+  --radius-xs: 7px;
+  --radius-sm: 7px;
+  --radius-md: 7px;
+  --radius-lg: 7px;
+  --radius-xl: 7px;
+  --radius-2xl: 7px;
+  --radius-3xl: 7px;
+  --radius-4xl: 7px;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: var(--color-ink-800);
+}
+
+* {
+  border-color: color-mix(in oklab, var(--color-ink-200) 60%, transparent);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-flame-500) 30%, transparent);
+  color: var(--color-ink-900);
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+@utility text-gradient-brand {
+  color: var(--color-flame-600);
+}
+
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-flame-600);
+}
+
+@utility justify-copy {
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+@media (max-width: 30rem) {
+  .justify-copy {
+    text-align: left;
+    hyphens: manual;
+    -webkit-hyphens: manual;
+  }
+}
+
+@utility card {
+  background: #ffffff;
+  border: 1px solid color-mix(in oklab, var(--color-ink-200) 55%, transparent);
+  border-radius: 7px;
+  box-shadow: 0 1px 2px rgba(8, 21, 39, 0.04), 0 10px 30px -18px rgba(8, 21, 39, 0.28);
+}
+
+@utility mesh {
+  background:
+    radial-gradient(60% 55% at 15% 15%, rgba(234, 131, 46, 0.18), transparent 60%),
+    radial-gradient(55% 50% at 85% 20%, rgba(234, 131, 46, 0.10), transparent 60%),
+    radial-gradient(60% 60% at 60% 100%, rgba(12, 29, 51, 0.16), transparent 60%);
+}
+
+@utility dot-grid {
+  background-image: radial-gradient(color-mix(in oklab, var(--color-ink-300) 45%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+@utility graph-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+@keyframes shimmer {
+  from { transform: translateX(-120%); }
+  to { transform: translateX(220%); }
+}
+@utility animate-shimmer {
+  animation: shimmer 2.6s var(--ease-out-quart) infinite;
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@utility animate-float {
+  animation: float-y 3.5s ease-in-out infinite;
+}
+
+@keyframes dash-flow {
+  to { stroke-dashoffset: -16; }
+}
+@utility animate-dash {
+  animation: dash-flow 0.8s linear infinite;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(32px); filter: blur(16px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+@utility animate-rise {
+  animation: rise 1.2s var(--ease-out-quart) both;
+}
+
+@keyframes letter-in {
+  from { opacity: 0; transform: translateX(-6px); filter: blur(6px); }
+  to { opacity: 1; transform: translateX(0); filter: blur(0); }
+}
+@utility animate-letter-in {
+  animation: letter-in 0.45s var(--ease-out-quart) both;
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(-24px); filter: blur(10px); }
+  to { opacity: 1; transform: translateX(0); filter: blur(0); }
+}
+@utility animate-slide-in {
+  animation: slide-in 0.75s var(--ease-out-quart) both;
+}
+
+@keyframes search-drop {
+  0%   { transform: translateY(-10px); opacity: 0; }
+  30%  { transform: translateY(-16px); opacity: 0.55; }
+  70%  { transform: translateY(4px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@utility animate-search-drop {
+  animation: search-drop 0.5s var(--ease-out-quart) both;
+}
+
+@keyframes search-line {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+@utility animate-search-line {
+  animation: search-line 0.5s var(--ease-out-quart) 0.35s both;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@utility animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+@utility animate-marquee-slow {
+  animation: marquee var(--marquee-duration, 20s) linear infinite;
+}
+
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-flame-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+    /* A looping background video is motion the visitor did not ask for.
+       Hiding it uncovers the still image sitting behind it in Hero.tsx. */
+    .hero-video {
+      display: none !important;
+    }
+  }
+}
