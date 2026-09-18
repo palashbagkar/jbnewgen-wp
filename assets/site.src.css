@@ -277,3 +277,48 @@ h1, h2, h3, h4, .font-display {
     }
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Header, nav and reveal hooks.
+
+   These are the handful of rules that cannot be expressed as utilities on the
+   element, because they depend on a state that lives on an ANCESTOR -- the
+   header being "clear" over the hero. In React that was a `clear` boolean
+   threaded into every className; here one class on the header drives the lot.
+   --------------------------------------------------------------------------- */
+
+/* Default: the bar is solid white, so links are ink. */
+.jb-navlink        { color: var(--color-ink-700); }
+.jb-navlink:hover  { color: var(--color-ink-950); }
+.jb-navlink.is-active { color: var(--color-flame-600); }
+
+/* Over the hero video: white text, flame for the active item. */
+#jb-header.is-clear .jb-navlink        { color: rgb(255 255 255 / 0.85); }
+#jb-header.is-clear .jb-navlink:hover  { color: #fff; }
+#jb-header.is-clear .jb-navlink.is-active { color: var(--color-flame-400); }
+
+/* Two logo files, one shown at a time. The light one only appears while the
+   header is over the hero. Both ship so there is no swap flicker on scroll. */
+.jb-logo-light { display: none; }
+#jb-header.is-clear .jb-logo-light { display: block; }
+#jb-header.is-clear .jb-logo-dark  { display: none; }
+
+/* Mega menu columns: one per pillar, set inline by the template. Tailwind
+   cannot express this -- the count is data, not a fixed class. */
+.jb-mega-grid { grid-template-columns: repeat(var(--jb-mega-cols, 4), minmax(0, 1fr)); }
+@media (max-width: 64rem) {
+  .jb-mega-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Reveals. The hidden state is added by JS, never by the stylesheet, so
+   content is visible when scripts do not run. */
+.jb-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .7s var(--ease-out-quart), transform .7s var(--ease-out-quart);
+}
+.jb-reveal.is-revealed { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .jb-reveal { opacity: 1; transform: none; transition: none; }
+}
