@@ -31,6 +31,12 @@ wp-config-local.php
 # Plugins are installed, not vendored (cap: 3 — see CONTEXT.md §4)
 /wp-content/plugins/
 
+# Must-use plugins are LOCAL DEV ONLY and must never reach the server.
+# zz-devlogin.php in here is a password-free sign-in by query string; the file
+# header claimed this directory was already ignored and it was not, so the
+# backdoor was one `git add -A` from being committed.
+/wp-content/mu-plugins/
+
 # Bundled default themes — only our theme is tracked
 /wp-content/themes/*
 !/wp-content/themes/jbnewgen/
@@ -60,3 +66,13 @@ Thumbs.db
 
 # Claude local overrides
 .claude/settings.local.json
+
+# Debug log — it records every mail subject, and our sign-in emails put the
+# six-digit code in the subject line. Never commit it.
+/wp-content/debug.log
+
+# Graphify index for this repo — a local, regenerable artifact, and large.
+/wp-content/themes/jbnewgen/graphify-out/
+
+# Local UI screenshots used while iterating on the admin.
+/.preview/

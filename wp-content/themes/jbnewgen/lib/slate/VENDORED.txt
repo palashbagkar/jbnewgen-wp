@@ -1,0 +1,12 @@
+Slate Admin Theme 1.2.4 — https://github.com/ryansommers/slate
+License: GPLv2 or later. Author: Ryan Sommers / Seven Bold.
+
+Vendored into the theme rather than installed as a plugin, so it costs none of
+the three plugin slots (CONTEXT.md §4) — same pattern as Carbon Fields.
+
+Taken: css/slate.css (layout), js/slate.js. Deliberately NOT taken:
+  - css/dynamic.php  — injects an inline <style> of blue/red accent colours on
+                       admin_head, i.e. AFTER enqueued stylesheets, so it would
+                       override the Payload palette. Layout only is wanted.
+  - the admin_footer_text filter — it advertises "Slate Pro".
+Payload colours are applied on top by assets/admin.css.
