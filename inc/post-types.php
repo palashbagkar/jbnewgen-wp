@@ -2,6 +2,14 @@
 /**
  * Custom Post Types — mirrors Payload collections in ../jbnewgen/src/collections/.
  * See CONTEXT.md §5 for the collection-to-CPT mapping.
+ *
+ * Every type declares its own `capability_type` rather than inheriting the
+ * generic `post` capabilities. Sharing `post` caps means a role can only ever
+ * be granted "edit all content" or "edit none" — "may edit Job Openings but
+ * not Services" is not expressible. Per-type caps (edit_jobs, publish_services,
+ * …) are what inc/roles.php hands out, and what makes the role builder able to
+ * offer a checkbox per content type. `map_meta_cap` is required alongside it so
+ * WordPress still resolves per-post checks like "is this your own draft?".
  */
 
 /**
@@ -65,10 +73,19 @@ add_action( 'init', function () {
 		'description' => __( 'The pillars that group services. Reorder with the &ldquo;Order&rdquo; field.', 'jbnewgen' ),
 		'labels' => jbnewgen_post_type_labels( 'Service Category', 'Service Categories' ),
 		// Mirrors ServicePillars.ts: 4 pillars, ordered via the "order" field -> native menu_order.
+		'capability_type' => array( 'pillar', 'pillars' ),
+		'map_meta_cap'    => true,
+		// WordPress derives `create_posts` from `edit_posts` unless it is named,
+		// so "may open an entry" and "may make one" were the same permission —
+		// which is why the read-only Viewer role still rendered an Add button.
+		'capabilities'    => array( 'create_posts' => 'create_pillars' ),
 		'public'       => true,
 		'show_in_rest' => true,
 		'menu_icon'    => 'dashicons-networking',
-		'supports'     => array( 'title', 'page-attributes' ),
+		// 'revisions' because every one of these collections carries
+		// versions: { maxPerDoc: 20 } in Payload — the live admin keeps a
+		// history for all five, not only for Insights.
+		'supports'     => array( 'title', 'page-attributes', 'revisions' ),
 		'has_archive'  => false,
 		'rewrite'      => array( 'slug' => 'services' ),
 	) );
@@ -78,10 +95,19 @@ add_action( 'init', function () {
 		'labels' => jbnewgen_post_type_labels( 'Service', 'Services' ),
 		// Mirrors Services.ts. "pillar" (required, child-of relationship) is a Carbon
 		// Fields association field, not a taxonomy — see inc/fields-service.php.
+		'capability_type' => array( 'service', 'services' ),
+		'map_meta_cap'    => true,
+		// WordPress derives `create_posts` from `edit_posts` unless it is named,
+		// so "may open an entry" and "may make one" were the same permission —
+		// which is why the read-only Viewer role still rendered an Add button.
+		'capabilities'    => array( 'create_posts' => 'create_services' ),
 		'public'       => true,
 		'show_in_rest' => true,
 		'menu_icon'    => 'dashicons-list-view',
-		'supports'     => array( 'title', 'page-attributes' ),
+		// 'revisions' because every one of these collections carries
+		// versions: { maxPerDoc: 20 } in Payload — the live admin keeps a
+		// history for all five, not only for Insights.
+		'supports'     => array( 'title', 'page-attributes', 'revisions' ),
 		'has_archive'  => false,
 	) );
 
@@ -94,6 +120,12 @@ add_action( 'init', function () {
 		// NOTE: Insights.ts also has a ChartBlock embedded in body (Lexical
 		// BlocksFeature) with no WordPress equivalent modeled here — open
 		// decision, see CONTEXT.md §7 and the Phase 4 handoff notes.
+		'capability_type' => array( 'insight', 'insights' ),
+		'map_meta_cap'    => true,
+		// WordPress derives `create_posts` from `edit_posts` unless it is named,
+		// so "may open an entry" and "may make one" were the same permission —
+		// which is why the read-only Viewer role still rendered an Add button.
+		'capabilities'    => array( 'create_posts' => 'create_insights' ),
 		'public'       => true,
 		'show_in_rest' => true,
 		'menu_icon'    => 'dashicons-lightbulb',
@@ -106,10 +138,19 @@ add_action( 'init', function () {
 		'description' => __( 'The people shown on the Core Team page. Reorder with the &ldquo;Order&rdquo; field — lower numbers appear first.', 'jbnewgen' ),
 		'labels' => jbnewgen_post_type_labels( 'Team Member', 'Core Team', 'team members' ),
 		// Mirrors TeamMembers.ts. name -> native post title, order -> native menu_order.
+		'capability_type' => array( 'team_member', 'team_members' ),
+		'map_meta_cap'    => true,
+		// WordPress derives `create_posts` from `edit_posts` unless it is named,
+		// so "may open an entry" and "may make one" were the same permission —
+		// which is why the read-only Viewer role still rendered an Add button.
+		'capabilities'    => array( 'create_posts' => 'create_team_members' ),
 		'public'       => true,
 		'show_in_rest' => true,
 		'menu_icon'    => 'dashicons-groups',
-		'supports'     => array( 'title', 'page-attributes' ),
+		// 'revisions' because every one of these collections carries
+		// versions: { maxPerDoc: 20 } in Payload — the live admin keeps a
+		// history for all five, not only for Insights.
+		'supports'     => array( 'title', 'page-attributes', 'revisions' ),
 		'has_archive'  => false,
 	) );
 
@@ -117,10 +158,19 @@ add_action( 'init', function () {
 		'description' => __( 'Open roles on the Careers page. Untick &ldquo;Listed&rdquo; to hide a role without deleting it.', 'jbnewgen' ),
 		'labels' => jbnewgen_post_type_labels( 'Job Opening', 'Job Openings' ),
 		// Mirrors Jobs.ts. title -> native post title, order -> native menu_order.
+		'capability_type' => array( 'job', 'jobs' ),
+		'map_meta_cap'    => true,
+		// WordPress derives `create_posts` from `edit_posts` unless it is named,
+		// so "may open an entry" and "may make one" were the same permission —
+		// which is why the read-only Viewer role still rendered an Add button.
+		'capabilities'    => array( 'create_posts' => 'create_jobs' ),
 		'public'       => true,
 		'show_in_rest' => true,
 		'menu_icon'    => 'dashicons-briefcase',
-		'supports'     => array( 'title', 'page-attributes' ),
+		// 'revisions' because every one of these collections carries
+		// versions: { maxPerDoc: 20 } in Payload — the live admin keeps a
+		// history for all five, not only for Insights.
+		'supports'     => array( 'title', 'page-attributes', 'revisions' ),
 		'has_archive'  => true,
 		'rewrite'      => array( 'slug' => 'careers' ),
 	) );

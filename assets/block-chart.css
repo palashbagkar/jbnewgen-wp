@@ -1,0 +1,352 @@
+/* The chart block — render AND editor.
+ *
+ * Its own file because it is needed in two documents. The block editor's
+ * canvas is an <iframe> in WordPress 6.3 and later, and assets/admin.css
+ * cannot reach inside it; `add_editor_style()` can. Loading the whole 5,000
+ * line admin stylesheet into the canvas to get eighty rules of chart would
+ * drag every piece of admin chrome in with it, so the chart takes the eighty
+ * rules with it instead.
+ *
+ * Loaded three ways, from inc/block-chart.php:
+ *   add_editor_style()   into the editor canvas iframe
+ *   admin_enqueue_scripts  for the block's own editing panel, which renders
+ *                          outside the canvas in the inspector
+ *   wp_enqueue_style     on the front end, once templates exist
+ */
+
+/* ==========================================================================
+   THE CHART BLOCK
+   inc/block-chart.php — parity with Payload's ChartBlock. These rules paint
+   the preview inside the editor; the same markup carries them on the front
+   end once templates exist.
+   ========================================================================== */
+
+.jb-chartblock { margin: 32px 0; }
+.jb-chartblock__title {
+	margin: 0 0 12px;
+	font-size: var(--jb-fs-heading);
+	font-weight: 600;
+	color: var(--jb-text);
+}
+.jb-chartblock__plot {
+	padding: 16px;
+	border: 1px solid var(--jb-border);
+	border-radius: 16px;   /* rounded-2xl, as ChartRenderer.tsx has it */
+	background: var(--jb-box);
+}
+.jb-chartblock__caption {
+	margin: 8px 0 0;
+	font-size: var(--jb-fs-small);
+	color: var(--jb-label);
+}
+.jb-chartblock__empty {
+	margin: 0;
+	padding: 48px 0;
+	text-align: center;
+	color: var(--jb-label);
+	font-size: var(--jb-fs-small);
+}
+
+.jb-chartblock__svg { display: block; width: 100%; height: 240px; }
+.jb-chartblock__svg--pie { width: 200px; height: 200px; flex: 0 0 auto; }
+
+.jb-chartblock__grid {
+	stroke: var(--jb-border);
+	stroke-dasharray: 3 3;
+	vector-effect: non-scaling-stroke;
+}
+.jb-chartblock__tick { fill: var(--jb-label); font-size: 12px; }
+.jb-chartblock__bar  { fill: #EA832E; }
+.jb-chartblock__line {
+	fill: none;
+	stroke: #EA832E;
+	stroke-width: 2;
+	stroke-linejoin: round;
+	stroke-linecap: round;
+	vector-effect: non-scaling-stroke;
+}
+.jb-chartblock__area { fill: #EA832E; fill-opacity: .15; stroke: none; }
+.jb-chartblock__dot  { fill: #EA832E; }
+
+/* The category labels are HTML under the SVG rather than <text> inside it: the
+   plot uses preserveAspectRatio="none" to fill the panel, which would stretch
+   any type drawn in the same coordinate space. */
+.jb-chartblock__axis {
+	display: flex;
+	justify-content: space-between;
+	margin: 6px 14px 0 44px;
+}
+.jb-chartblock__label {
+	font-size: 12px;
+	color: var(--jb-label);
+	text-align: center;
+	flex: 1 1 0;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.jb-chartblock__pie { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+.jb-chartblock__key { margin: 0; list-style: none; display: grid; gap: 7px; min-width: 0; }
+.jb-chartblock__key li { display: flex; align-items: center; gap: 9px; margin: 0; }
+.jb-chartblock__swatch { width: 10px; height: 10px; border-radius: 2px; flex: 0 0 auto; }
+.jb-chartblock__key-label { color: var(--jb-text); font-size: var(--jb-fs-small); }
+.jb-chartblock__key-value { color: var(--jb-label); font-size: var(--jb-fs-small); margin-left: auto; }
+
+/* the readout under the Data field in the sidebar */
+.jb-chartblock__status { margin: -8px 0 16px; font-size: var(--jb-fs-small); }
+.jb-chartblock__status.is-muted { color: var(--jb-label); }
+.jb-chartblock__status.is-ok    { color: var(--jb-text); }
+.jb-chartblock__status.is-warn  { color: #EA832E; }
+.jb-chartblock__status.is-bad   { color: var(--jb-error, #f66d67); }
+
+/* A bar sits in the middle of its slot, so a centred label lines up with it.
+   A line's first point sits on the left edge of the plot and its last on the
+   right edge, so the same centred labels drift half a slot out. Pin the two
+   ends and let the rest distribute. */
+.jb-chartblock--line .jb-chartblock__label:first-child,
+.jb-chartblock--area .jb-chartblock__label:first-child { text-align: left; }
+.jb-chartblock--line .jb-chartblock__label:last-child,
+.jb-chartblock--area .jb-chartblock__label:last-child { text-align: right; }
+
+/* ==========================================================================
+   THE CODE SCREEN
+   inc/two-factor.php — step two of signing in. Sits inside the login page's
+   own chrome, so it inherits the surfaces already defined above and only the
+   pieces this form adds need painting.
+   ========================================================================== */
+
+/* Scoped to the form's id, because wp-login.php's own stylesheet sets
+   `#loginform p { margin-bottom: 0 }` and wins on specificity otherwise —
+   which is why the sentence and the field label were touching. */
+#jb-2fa .jb-2fa__lead {
+	margin: 0 0 22px;
+	color: var(--jb-label);
+	line-height: 1.6;
+}
+#jb-2fa .jb-2fa__lead strong { color: var(--jb-text); font-weight: 500; white-space: nowrap; }
+#jb-2fa label { display: block; margin-bottom: 6px; color: var(--jb-label); }
+#jb-2fa p { margin-bottom: 18px; }
+#jb-2fa .forgetmenot label { display: inline; margin: 0; }
+#jb-2fa .submit { margin-bottom: 0; }
+.jb-2fa__notice {
+	margin: 0 0 16px;
+	padding: 8px 11px;
+	background: var(--jb-bg);
+	border: 1px solid var(--jb-border);
+	border-left: 2px solid var(--jb-border-hover);
+	border-radius: var(--jb-radius);
+	color: var(--jb-label);
+	font-size: var(--jb-fs-small);
+}
+
+/* Six digits, spaced out and centred. A one-time code is read back off a
+   screen a character at a time, and body-width digits in a body-width field
+   are the wrong shape for that job. */
+.jb-2fa__code {
+	width: 100% !important;
+	text-align: center;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: 26px !important;
+	line-height: 1.4;
+	letter-spacing: .38em;
+	text-indent: .38em;   /* letter-spacing pads the right of the last glyph; this re-centres */
+	padding: 10px 0 !important;
+}
+
+#jb-2fa .jb-2fa__resend {
+	margin: 20px 0 0 !important;
+	font-size: var(--jb-fs-small);
+	color: var(--jb-label);
+}
+.jb-2fa__resend .button-link {
+	color: var(--jb-label);
+	text-decoration: underline;
+	background: none;
+	border: 0;
+	padding: 0;
+	cursor: pointer;
+	font-size: inherit;
+}
+.jb-2fa__resend .button-link:hover,
+.jb-2fa__resend a:hover { color: var(--jb-text); }
+.jb-2fa__sep { margin: 0 6px; opacity: .5; }
+
+/* the two roles nobody can remove */
+.jb-roles__row--locked strong { color: var(--jb-text); }
+.jb-chip--locked { margin-left: 8px; vertical-align: 1px; }
+.jb-protected { color: var(--jb-label); font-size: var(--jb-fs-small); }
+
+/* ==========================================================================
+   THE CHART EDITOR
+   assets/block-chart.js — the panel that appears under the chart when it is
+   selected. It replaced a JSON textarea, so it is built to be read by someone
+   who has never seen an array.
+   ========================================================================== */
+
+.jb-chartedit {
+	margin-top: 14px;
+	padding: 16px;
+	background: var(--jb-box);
+	border: 1px solid var(--jb-border);
+	border-radius: var(--jb-radius);
+}
+.jb-chartedit__section { margin: 0 0 20px; }
+.jb-chartedit__section:last-child { margin-bottom: 0; }
+.jb-chartedit__section--split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 780px) { .jb-chartedit__section--split { grid-template-columns: 1fr; } }
+
+.jb-chartedit__legend {
+	display: block;
+	margin: 0 0 8px;
+	color: var(--jb-label);
+	font-size: var(--jb-fs-micro);
+	line-height: var(--jb-lh-micro);
+	text-transform: uppercase;
+	letter-spacing: .06em;
+}
+.jb-chartedit__hint {
+	margin: -2px 0 10px !important;
+	color: var(--jb-label);
+	font-size: var(--jb-fs-small);
+	line-height: var(--jb-lh-small);
+}
+
+/* --- the type picker ------------------------------------------------------ */
+
+/* Four shapes rather than a dropdown of four words: the difference between a
+   bar and an area chart is a picture, and a picture is what should be on the
+   button. */
+.jb-chartedit__kinds { display: flex; gap: 8px; flex-wrap: wrap; }
+.jb-chartedit__kind {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	background: var(--jb-bg);
+	border: 1px solid var(--jb-border);
+	border-radius: var(--jb-radius);
+	color: var(--jb-label);
+	font-size: var(--jb-fs-small);
+	cursor: pointer;
+	transition: border-color var(--jb-fast) var(--jb-ease), color var(--jb-fast) var(--jb-ease);
+}
+.jb-chartedit__kind:hover { border-color: var(--jb-border-hover); color: var(--jb-text); }
+.jb-chartedit__kind.is-current { border-color: var(--jb-text); color: var(--jb-text); }
+.jb-chartedit__kind svg { display: block; flex: 0 0 auto; }
+
+/* --- title and caption ---------------------------------------------------- */
+
+.jb-chartedit label { display: block; }
+.jb-chartedit input[type="text"] {
+	width: 100%;
+	height: 34px;
+	padding: 0 10px;
+	background: var(--jb-bg);
+	border: 1px solid var(--jb-border);
+	border-radius: var(--jb-radius);
+	color: var(--jb-text);
+	box-shadow: none;
+}
+.jb-chartedit input[type="text"]:focus { border-color: var(--jb-border-hover); outline: none; box-shadow: none; }
+
+/* --- the data table ------------------------------------------------------- */
+
+.jb-chartedit__table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+	background: var(--jb-bg);
+	border: 1px solid var(--jb-border);
+	border-radius: var(--jb-radius);
+	overflow: hidden;
+}
+.jb-chartedit__table th,
+.jb-chartedit__table td {
+	padding: 6px 8px;
+	border-top: 1px solid var(--jb-border);
+	text-align: left;
+	vertical-align: middle;
+}
+.jb-chartedit__table thead th {
+	border-top: 0;
+	color: var(--jb-label);
+	font-size: var(--jb-fs-micro);
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: .06em;
+	white-space: nowrap;
+}
+.jb-chartedit__n    { width: 34px; color: var(--jb-label); font-size: var(--jb-fs-micro); text-align: right !important; }
+.jb-chartedit__v    { width: 140px; }
+.jb-chartedit__acts { width: 96px; text-align: right !important; white-space: nowrap; }
+
+.jb-chartedit__table input[type="text"] { height: 30px; }
+.jb-chartedit__table tr.is-bad input { border-color: var(--jb-error, #f66d67); }
+
+/* Row buttons are quiet until the row is under the cursor — a table of five
+   rows should not be a table of fifteen buttons. */
+.jb-chartedit__acts button,
+.jb-chartedit__sorts button {
+	width: 26px;
+	height: 26px;
+	margin-left: 2px;
+	padding: 0;
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: var(--jb-radius);
+	color: var(--jb-label);
+	cursor: pointer;
+	opacity: .45;
+	transition: opacity var(--jb-fast) var(--jb-ease), color var(--jb-fast) var(--jb-ease);
+}
+.jb-chartedit__table tr:hover .jb-chartedit__acts button { opacity: 1; }
+.jb-chartedit__acts button:hover,
+.jb-chartedit__sorts button:hover { border-color: var(--jb-border); color: var(--jb-text); opacity: 1; }
+.jb-chartedit__acts button:disabled { opacity: .15; cursor: default; border-color: transparent; }
+.jb-chartedit__acts button.is-remove:hover { color: var(--jb-error, #f66d67); border-color: var(--jb-error, #f66d67); }
+.jb-chartedit__sorts { margin-left: 6px; }
+.jb-chartedit__sorts button { width: 20px; height: 20px; font-size: 10px; }
+
+.jb-chartedit__blank td {
+	padding: 22px 10px !important;
+	color: var(--jb-label);
+	font-size: var(--jb-fs-small);
+	text-align: center;
+}
+
+/* --- the foot ------------------------------------------------------------- */
+
+.jb-chartedit__foot {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	flex-wrap: wrap;
+	margin-top: 10px;
+}
+.jb-chartedit__add {
+	height: 30px;
+	padding: 0 12px;
+	background: var(--jb-bg);
+	border: 1px solid var(--jb-border);
+	border-radius: var(--jb-radius);
+	color: var(--jb-text);
+	font-size: var(--jb-fs-small);
+	cursor: pointer;
+}
+.jb-chartedit__add:hover { border-color: var(--jb-border-hover); }
+.jb-chartedit__stats { color: var(--jb-label); font-size: var(--jb-fs-small); }
+.jb-chartedit__dot { margin: 0 7px; opacity: .5; }
+.jb-chartedit__warn { color: #EA832E; }
+.jb-chartedit__paste {
+	margin: 10px 0 0 !important;
+	color: var(--jb-text);
+	font-size: var(--jb-fs-small);
+}
+.jb-chartedit__aside {
+	margin: 0 0 14px !important;
+	color: var(--jb-label);
+	font-size: var(--jb-fs-small);
+	line-height: var(--jb-lh-small);
+}
