@@ -26,12 +26,19 @@
 	var wash   = document.getElementById( 'jb-header-wash' );
 	var solid  = document.getElementById( 'jb-header-solid' );
 
-	if ( header && wash && solid && header.getAttribute( 'data-hero' ) === '1' ) {
+	// The hero element must actually EXIST, not merely be expected. Trusting
+	// data-hero alone meant that on a homepage with no hero yet, heroHeight
+	// fell back to the viewport, progress came out around 0.07, and the header
+	// went into transparent-over-video mode on top of a white page -- rendering
+	// every nav link white on white. Only the active link stayed visible,
+	// because flame is flame either way.
+	var hero = document.getElementById( 'hero' );
+
+	if ( header && wash && solid && hero && header.getAttribute( 'data-hero' ) === '1' ) {
 		var raf = 0;
 
 		var update = function () {
-			var hero        = document.getElementById( 'hero' );
-			var heroHeight  = ( hero && hero.offsetHeight ) || window.innerHeight;
+			var heroHeight  = hero.offsetHeight || window.innerHeight;
 			var progress    = Math.min( 1, Math.max( 0, ( window.scrollY + HEADER_PX ) / heroHeight ) );
 			var blur, alpha;
 
