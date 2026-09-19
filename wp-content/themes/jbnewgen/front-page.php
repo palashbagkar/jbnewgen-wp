@@ -351,18 +351,20 @@ $jb_insights = get_posts( array(
 				<h3 class="text-xl font-bold text-ink-900 sm:text-2xl"><?php esc_html_e( 'India market insights, once a month', 'jbnewgen' ); ?></h3>
 				<p class="mt-2 text-ink-500"><?php esc_html_e( 'Sharp, practical notes for operators - no fluff, no spam. Unsubscribe anytime.', 'jbnewgen' ); ?></p>
 			</div>
-			<?php
-			// Not yet wired to a handler -- the submit endpoint is part of the
-			// forms phase. Left inert rather than pointed somewhere that would
-			// silently drop addresses.
-			?>
-			<form class="flex w-full max-w-md flex-col gap-3 sm:flex-row" aria-label="<?php esc_attr_e( 'Newsletter signup', 'jbnewgen' ); ?>" method="post">
-				<?php wp_nonce_field( 'jb_newsletter', 'jb_newsletter_nonce' ); ?>
-				<input type="email" name="jb_email" required placeholder="you@company.com" class="h-12 w-full rounded-[7px] border border-ink-200 bg-white px-5 text-ink-900 placeholder:text-ink-400 focus:border-flame-400 focus:outline-none">
-				<button type="submit" class="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-[7px] bg-flame-500 px-6 font-semibold text-white transition-colors hover:bg-flame-600">
-					<?php esc_html_e( 'Subscribe', 'jbnewgen' ); ?><?php jbnewgen_icon( 'arrowRight', 18 ); ?>
-				</button>
-			</form>
+			<?php if ( isset( $_GET['subscribed'] ) ) : ?>
+				<p class="flex w-full max-w-md items-center gap-2 rounded-[7px] bg-flame-500/10 px-5 py-3 text-sm font-semibold text-flame-700"><?php jbnewgen_icon( 'check', 16 ); ?><?php esc_html_e( "You're subscribed. Thanks for joining.", 'jbnewgen' ); ?></p>
+			<?php else : ?>
+				<form class="flex w-full max-w-md flex-col gap-3 sm:flex-row" aria-label="<?php esc_attr_e( 'Newsletter signup', 'jbnewgen' ); ?>" method="post">
+					<?php wp_nonce_field( 'jb_newsletter', 'jb_newsletter_nonce' ); ?>
+					<input type="email" name="jb_email" required placeholder="you@company.com" class="h-12 w-full rounded-[7px] border border-ink-200 bg-white px-5 text-ink-900 placeholder:text-ink-400 focus:border-flame-400 focus:outline-none">
+					<button type="submit" class="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-[7px] bg-flame-500 px-6 font-semibold text-white transition-colors hover:bg-flame-600">
+						<?php esc_html_e( 'Subscribe', 'jbnewgen' ); ?><?php jbnewgen_icon( 'arrowRight', 18 ); ?>
+					</button>
+				</form>
+				<?php if ( isset( $_GET['newsletter_error'] ) ) : ?>
+					<p class="mt-2 text-sm font-medium text-red-600"><?php esc_html_e( 'Please enter a valid email address.', 'jbnewgen' ); ?></p>
+				<?php endif; ?>
+			<?php endif; ?>
 		</div>
 	</div>
 </section>

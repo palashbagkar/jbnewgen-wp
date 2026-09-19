@@ -30,6 +30,7 @@ function jbnewgen_site_info() {
 		'phone'      => '+91 6362864230',
 		'phone_href' => 'tel:+916362864230',
 		'email'      => 'sales@jbnewgen.com',
+		'emails'     => array( 'sales' => 'sales@jbnewgen.com', 'support' => 'support@jbnewgen.com' ),
 		'socials'    => array(
 			array( 'label' => 'LinkedIn',  'href' => 'https://www.linkedin.com/company/jb-newgen-enterprises', 'icon' => 'linkedin' ),
 			array( 'label' => 'Facebook',  'href' => 'https://www.facebook.com/profile.php?id=61566375428662', 'icon' => 'facebook' ),
