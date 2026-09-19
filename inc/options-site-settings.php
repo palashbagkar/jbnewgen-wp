@@ -51,18 +51,23 @@ add_action( 'carbon_fields_register_fields', function () {
 				->set_help_text( __( 'Tick to remove the background photo — the banner falls back to the plain dark panel.', 'jbnewgen' ) ),
 
 			Field::make( 'textarea', 'careers_intro', __( 'Hero paragraph', 'jbnewgen' ) )
-				->set_help_text( __( 'The paragraph under the Careers headline — mentions how many roles are open.', 'jbnewgen' ) ),
+				->set_help_text( __( 'The paragraph under the Careers headline — mentions how many roles are open.', 'jbnewgen' ) )
+				->set_default_value( "Looking to join JB NewGen? Now it's easier than ever. With Quick Apply, you can explore our 5 current job openings and apply to all relevant positions in just a few clicks." ),
 
 			Field::make( 'text', 'careers_roles_eyebrow', __( 'Open-roles eyebrow', 'jbnewgen' ) )
-				->set_help_text( __( 'Small label above the role list. Currently "Open Roles".', 'jbnewgen' ) ),
+				->set_help_text( __( 'Small label above the role list. Currently "Open Roles".', 'jbnewgen' ) )
+				->set_default_value( 'Open Roles' ),
 
 			Field::make( 'text', 'careers_roles_title', __( 'Open-roles heading', 'jbnewgen' ) )
-				->set_help_text( __( 'Currently "5 current openings".', 'jbnewgen' ) ),
+				->set_help_text( __( 'Currently "5 current openings".', 'jbnewgen' ) )
+				->set_default_value( '5 current openings' ),
 
-			Field::make( 'textarea', 'careers_roles_intro', __( 'Open-roles intro', 'jbnewgen' ) ),
+			Field::make( 'textarea', 'careers_roles_intro', __( 'Open-roles intro', 'jbnewgen' ) )
+				->set_default_value( "Every role below is remote-friendly across our India footprint. Apply to all relevant positions in just a few clicks." ),
 
 			Field::make( 'textarea', 'careers_address', __( 'Footer address line', 'jbnewgen' ) )
-				->set_help_text( __( 'The single-line address printed at the bottom of the Careers page.', 'jbnewgen' ) ),
+				->set_help_text( __( 'The single-line address printed at the bottom of the Careers page.', 'jbnewgen' ) )
+				->set_default_value( 'JB NewGen Enterprises Pvt. Ltd. · 504 Challenger Tower III, Thakur Village, Kandivali (E), Mumbai 400 101 · support@jbnewgen.com · +91 6362864230' ),
 
 		) )
 

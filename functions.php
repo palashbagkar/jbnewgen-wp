@@ -30,6 +30,14 @@ require_once get_template_directory() . '/inc/options-site-settings.php';
 require_once get_template_directory() . '/inc/icons.php';
 require_once get_template_directory() . '/inc/nav.php';
 require_once get_template_directory() . '/inc/home-data.php';
+require_once get_template_directory() . '/inc/rewrites.php';
+require_once get_template_directory() . '/inc/nav-parts.php';
+require_once get_template_directory() . '/inc/insights-parts.php';
+require_once get_template_directory() . '/inc/forms.php';
+require_once get_template_directory() . '/inc/services-data.php';
+require_once get_template_directory() . '/inc/about-more-data.php';
+require_once get_template_directory() . '/inc/careers-data.php';
+require_once get_template_directory() . '/inc/insights-data.php';
 
 /**
  * Theme supports for the public templates.

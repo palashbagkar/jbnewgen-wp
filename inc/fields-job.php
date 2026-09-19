@@ -31,7 +31,7 @@ add_action( 'carbon_fields_register_fields', function () {
 				->set_required( true )
 				->set_width( 50 ),
 
-			Field::make( 'textarea', 'body', __( 'Role description', 'jbnewgen' ) )
+			Field::make( 'textarea', 'role_body', __( 'Role description', 'jbnewgen' ) )
 				->set_required( true ),
 
 			Field::make( 'checkbox', 'active', __( 'Listed', 'jbnewgen' ) )
