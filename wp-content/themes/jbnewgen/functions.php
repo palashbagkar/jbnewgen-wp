@@ -29,6 +29,7 @@ require_once get_template_directory() . '/inc/options-site-settings.php';
 // --- Public site -----------------------------------------------------------
 require_once get_template_directory() . '/inc/icons.php';
 require_once get_template_directory() . '/inc/nav.php';
+require_once get_template_directory() . '/inc/home-data.php';
 
 /**
  * Theme supports for the public templates.

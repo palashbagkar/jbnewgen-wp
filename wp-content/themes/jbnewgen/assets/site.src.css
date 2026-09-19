@@ -322,3 +322,14 @@ h1, h2, h3, h4, .font-display {
 @media (prefers-reduced-motion: reduce) {
   .jb-reveal { opacity: 1; transform: none; transition: none; }
 }
+
+/* Testimonial marquee. The React version sized cards with container-query
+   units (100cqw), which needs a @container ancestor; plain viewport-relative
+   widths give the same three-up/two-up/one-up result without it. */
+.jb-quote-card { width: calc(100vw - 2.5rem); }
+@media (min-width: 40rem) { .jb-quote-card { width: calc((min(80rem, 100vw) - 5rem) / 2); } }
+@media (min-width: 64rem) { .jb-quote-card { width: calc((min(80rem, 100vw) - 6rem) / 3); } }
+
+/* Pause on hover, and stand still for anyone who asked for less motion. */
+.jb-marquee:hover { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .jb-marquee { animation: none; } }
