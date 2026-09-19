@@ -19,4 +19,15 @@ return array(
 		'bio' => 'Over 50 years of experience in Electronics Design, Embedded Software Development, Product Design, Destructive Technology Research, and Technology Transfer, developed integrated programs that explore cutting-edge applications of robotics, sensors, drones, and AI/ML systems in diverse fields.',
 		'photo' => '/images/team/suresh-doraiswamy.jpg',
 	),
+	// Added directly on the live Payload CMS -- never landed in ../jbnewgen's
+	// git-tracked content.ts, so this fallback would silently drop him if the
+	// team_member CPT were ever emptied. Photo/bio pulled from the live site
+	// per CLAUDE.md RULE 3 (../jbnewgen/UPDATE/ has no About/Team content).
+	array(
+		'name' => 'Palash Bagkar',
+		'role' => 'Software Developer',
+		'bio' => 'A developer working across web interfaces, content systems and cloud infrastructure, responsible for designing and building jbnewgen.com and the platform that keeps it running.',
+		'photo' => '',
+		'linkedin' => 'https://www.linkedin.com/in/invxazion/',
+	),
 );

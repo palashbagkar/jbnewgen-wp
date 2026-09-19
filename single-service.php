@@ -135,8 +135,8 @@ while ( have_posts() ) :
 					<h2 class="text-balance text-3xl font-bold tracking-tight text-ink-900 sm:text-4xl"><?php echo esc_html( $jb_cta['title'] ); ?></h2>
 					<p class="mt-5 text-pretty text-lg text-ink-500"><?php echo esc_html( $jb_cta['body'] ); ?></p>
 					<div class="mt-9 flex flex-wrap justify-center gap-3">
-						<a href="<?php echo esc_url( home_url( '/quote' ) ); ?>" class="inline-flex h-12 items-center justify-center gap-2 rounded-[7px] border border-ink-300 px-6 text-base font-semibold text-ink-800 transition-colors hover:border-flame-500 hover:text-flame-600"><?php esc_html_e( 'Book Your Free Strategy Call', 'jbnewgen' ); ?></a>
-						<a href="mailto:sales@jbnewgen.com" class="inline-flex h-12 items-center justify-center gap-2 rounded-[7px] px-6 text-base font-semibold text-ink-600 transition-colors hover:text-flame-600"><?php esc_html_e( 'Email Us Directly', 'jbnewgen' ); ?><?php jbnewgen_icon( 'mail', 18 ); ?></a>
+						<?php jbnewgen_button( __( 'Book Your Free Strategy Call', 'jbnewgen' ), home_url( '/quote' ), array( 'variant' => 'secondary', 'size' => 'lg' ) ); ?>
+						<?php jbnewgen_button( __( 'Email Us Directly', 'jbnewgen' ), 'mailto:sales@jbnewgen.com', array( 'variant' => 'ghost', 'size' => 'lg', 'icon' => 'mail' ) ); ?>
 					</div>
 				</div>
 				<p class="mt-7 text-sm text-ink-400"><?php esc_html_e( 'JB NewGen Enterprises Private Limited · Mumbai, India · sales@jbnewgen.com · +91 6362864230', 'jbnewgen' ); ?></p>

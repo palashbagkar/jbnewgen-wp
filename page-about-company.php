@@ -147,7 +147,7 @@ $jb_extra = jbnewgen_about_company_extra();
 		<div>
 			<p class="mb-5 text-xs font-semibold uppercase tracking-[0.14em] text-flame-600"><?php esc_html_e( 'Coming Soon', 'jbnewgen' ); ?></p>
 			<h2 class="text-balance text-3xl font-bold tracking-tight text-ink-900 sm:text-4xl"><?php esc_html_e( '“SAAS-Sales as a Service” - India’s marketplace for global startups, local partners, and enterprise buyers', 'jbnewgen' ); ?></h2>
-			<p class="mt-5 text-pretty text-lg text-ink-500"><?php esc_html_e( '“SAAS-Sales as a Service” is a curated marketplace community connecting global startups seeking India entry with vetted Indian channel partners, specialist agencies, and enterprise CIOs and CTOs actively evaluating new technologies.', 'jbnewgen' ); ?></p>
+			<p class="mt-5 text-pretty text-lg text-ink-500"><?php esc_html_e( 'Beyond consultancy, JB NewGen is building “SAAS-Sales as a Service”: a curated marketplace community connecting global startups seeking India entry with vetted Indian channel partners, specialist agencies, and enterprise CIOs and CTOs actively evaluating new technologies.', 'jbnewgen' ); ?></p>
 			<ul class="mt-8 space-y-4">
 				<?php foreach ( $jb_extra['bridgeFeatures'] as $jb_f ) : ?>
 					<li class="flex gap-3">
@@ -158,6 +158,12 @@ $jb_extra = jbnewgen_about_company_extra();
 			</ul>
 		</div>
 		<div>
+			<?php $jb_saas_logo = jbnewgen_seeded_image_url( 'SAAS_logo.png', 'full' ); ?>
+			<?php if ( $jb_saas_logo ) : ?>
+				<div class="mb-6 flex justify-center lg:justify-end">
+					<img src="<?php echo esc_url( $jb_saas_logo ); ?>" alt="SAAS-Sales as a Service" class="h-auto w-[170px] shrink-0 sm:w-[300px]" loading="lazy">
+				</div>
+			<?php endif; ?>
 			<div class="relative overflow-hidden rounded-3xl bg-ink-950 p-8 text-white sm:p-10" data-reveal>
 				<div class="mesh pointer-events-none absolute inset-0 opacity-40"></div>
 				<div class="relative">

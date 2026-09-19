@@ -28,6 +28,7 @@ require_once get_template_directory() . '/inc/options-site-settings.php';
 
 // --- Public site -----------------------------------------------------------
 require_once get_template_directory() . '/inc/icons.php';
+require_once get_template_directory() . '/inc/ui-parts.php';
 require_once get_template_directory() . '/inc/nav.php';
 require_once get_template_directory() . '/inc/home-data.php';
 require_once get_template_directory() . '/inc/rewrites.php';
@@ -112,3 +113,22 @@ add_action( 'wp_head', function () {
 	</style>
 	<?php
 }, 1 );
+
+/**
+ * Favicon, from the same Site Settings > Logo > "Tab / favicon logo" field
+ * Header.tsx reads for logoTabUrl. WordPress's own Site Icon setting is a
+ * separate, unrelated field and was never set, so without this the tab was
+ * blank rather than falling back to it.
+ */
+add_action( 'wp_head', function () {
+	$id = function_exists( 'carbon_get_theme_option' ) ? (int) carbon_get_theme_option( 'logo_tab' ) : 0;
+	if ( ! $id ) {
+		return;
+	}
+	$url = wp_get_attachment_image_url( $id, 'full' );
+	if ( ! $url ) {
+		return;
+	}
+	$type = get_post_mime_type( $id );
+	printf( '<link rel="icon" href="%s"%s>' . "\n", esc_url( $url ), $type ? ' type="' . esc_attr( $type ) . '"' : '' );
+}, 2 );

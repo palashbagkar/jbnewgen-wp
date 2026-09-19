@@ -128,4 +128,73 @@
 			observer.observe( el );
 		} );
 	}
+
+	/* ---------------------------------------------------------------------
+	   4. Pillar showcase auto-rotation (ServicesShowcase + PillarVisual).
+
+	   One of the four panels is unhidden at a time on a 6s timer, paused
+	   while the pointer is over the visual -- ported from the setState/raf
+	   loop in ServicesShowcase.tsx. The reveal-in motion inside a panel is
+	   plain CSS keyed off the .is-active class this adds (see site.src.css),
+	   so this only owns the timer, the progress bar width, and hide/show.
+	   --------------------------------------------------------------------- */
+	var showcase = document.getElementById( 'jb-showcase' );
+
+	if ( showcase && ! window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) {
+		var visuals    = showcase.querySelectorAll( '[data-pillar-visual]' );
+		var ctas       = showcase.querySelectorAll( '[data-pillar-cta]' );
+		var texts      = showcase.querySelectorAll( '[data-pillar-text]' );
+		var visualWrap = document.getElementById( 'jb-showcase-visual' );
+		var count      = visuals.length;
+
+		if ( count > 1 ) {
+			var AUTO_MS    = parseInt( showcase.getAttribute( 'data-autoplay' ), 10 ) || 6000;
+			var pv_active  = 0;
+			var pv_paused  = false;
+			var pv_progress = 0;
+			var pv_last    = 0;
+			var pv_raf     = 0;
+
+			var pv_activate = function ( index ) {
+				pv_active = index;
+				for ( var i = 0; i < count; i++ ) {
+					var on = i === index;
+					visuals[ i ].classList.toggle( 'hidden', ! on );
+					visuals[ i ].classList.toggle( 'is-active', on );
+					ctas[ i ].classList.toggle( 'hidden', ! on );
+					ctas[ i ].classList.toggle( 'is-active', on );
+					texts[ i ].classList.toggle( 'hidden', ! on );
+				}
+			};
+
+			var pv_setProgress = function ( p ) {
+				var bar = ctas[ pv_active ].querySelector( '.jb-pv-progress' );
+				if ( bar ) {
+					bar.style.width = p + '%';
+				}
+			};
+
+			var pv_tick = function ( now ) {
+				if ( ! pv_paused ) {
+					var dt = now - pv_last;
+					pv_progress += ( dt / AUTO_MS ) * 100;
+					if ( pv_progress >= 100 ) {
+						pv_progress = 0;
+						pv_activate( ( pv_active + 1 ) % count );
+					}
+					pv_setProgress( pv_progress );
+				}
+				pv_last = now;
+				pv_raf = requestAnimationFrame( pv_tick );
+			};
+
+			if ( visualWrap ) {
+				visualWrap.addEventListener( 'mouseenter', function () { pv_paused = true; } );
+				visualWrap.addEventListener( 'mouseleave', function () { pv_paused = false; } );
+			}
+
+			pv_last = performance.now();
+			pv_raf  = requestAnimationFrame( pv_tick );
+		}
+	}
 } )();

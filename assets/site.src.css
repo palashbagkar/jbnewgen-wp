@@ -28,6 +28,9 @@
  * Always write full literal class names in templates. */
 @source "../*.php";
 @source "../template-parts/**/*.php";
+@source "../inc/home-data.php";
+@source "../inc/ui-parts.php";
+@source "../inc/nav-parts.php";
 
 
 @theme {
@@ -310,6 +313,12 @@ h1, h2, h3, h4, .font-display {
   .jb-mega-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+/* Core Team grid: capped at 4 columns, same reasoning as .jb-mega-grid --
+   COLUMN_CLASS in team/page.tsx picks 1-4 from the member count. */
+@media (min-width: 64rem) {
+  .jb-team-grid { grid-template-columns: repeat(var(--jb-team-cols, 3), minmax(0, 1fr)); }
+}
+
 /* Reveals. The hidden state is added by JS, never by the stylesheet, so
    content is visible when scripts do not run. */
 .jb-reveal {
@@ -321,6 +330,85 @@ h1, h2, h3, h4, .font-display {
 
 @media (prefers-reduced-motion: reduce) {
   .jb-reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   Pillar showcase (ServicesShowcase + PillarVisual).
+
+   One of the four panels is unhidden at a time by site.js; the reveal-in
+   motion inside a panel (bars filling, the sparkline drawing, channel rows
+   sliding in) is driven purely by the .is-active class that same swap adds,
+   so no per-frame JS is needed for it -- only the 6s timer and hide/show.
+   --------------------------------------------------------------------------- */
+.jb-pv-bar-fill { width: 0; transition: width 900ms var(--ease-out-quart); }
+.jb-pv-panel.is-active .jb-pv-bar-fill { width: var(--jb-bar, 0%); }
+.jb-pv-row:nth-child(1) .jb-pv-bar-fill { transition-delay: 0ms; }
+.jb-pv-row:nth-child(2) .jb-pv-bar-fill { transition-delay: 120ms; }
+.jb-pv-row:nth-child(3) .jb-pv-bar-fill { transition-delay: 240ms; }
+.jb-pv-row:nth-child(4) .jb-pv-bar-fill { transition-delay: 360ms; }
+
+.jb-pv-line, .jb-pv-area {
+  opacity: 0;
+  transition: opacity 1s ease 0.35s;
+}
+.jb-pv-panel.is-active .jb-pv-line,
+.jb-pv-panel.is-active .jb-pv-area {
+  opacity: 1;
+}
+.jb-pv-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.5s ease, opacity 1.5s ease;
+}
+.jb-pv-panel.is-active .jb-pv-line { stroke-dashoffset: 0; }
+
+.jb-pv-dot {
+  opacity: 0;
+  transition: opacity 0.5s ease 1.3s;
+}
+.jb-pv-panel.is-active .jb-pv-dot { opacity: 1; }
+
+.jb-pv-chan {
+  opacity: 0;
+  transform: translateX(-12px);
+  transition: opacity 500ms ease, transform 500ms ease;
+}
+.jb-pv-panel.is-active .jb-pv-chan { opacity: 1; transform: translateX(0); }
+.jb-pv-chan:nth-child(1) { transition-delay: 0ms; }
+.jb-pv-chan:nth-child(2) { transition-delay: 130ms; }
+.jb-pv-chan:nth-child(3) { transition-delay: 260ms; }
+
+.jb-pv-inbox {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 700ms ease 420ms, transform 700ms ease 420ms;
+}
+.jb-pv-panel.is-active .jb-pv-inbox { opacity: 1; transform: scale(1); }
+
+.jb-pv-gate {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 500ms ease, transform 500ms ease;
+}
+.jb-pv-panel.is-active .jb-pv-gate { opacity: 1; transform: translateY(0); }
+.jb-pv-gate:nth-child(1) { transition-delay: 0ms; }
+.jb-pv-gate:nth-child(2) { transition-delay: 90ms; }
+
+.jb-pv-log {
+  opacity: 0;
+  transition: opacity 700ms ease 400ms;
+}
+.jb-pv-panel.is-active .jb-pv-log { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .jb-pv-bar-fill, .jb-pv-line, .jb-pv-area, .jb-pv-dot,
+  .jb-pv-chan, .jb-pv-inbox, .jb-pv-gate, .jb-pv-log {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    stroke-dashoffset: 0;
+    width: var(--jb-bar, 100%);
+  }
 }
 
 /* Testimonial marquee. The React version sized cards with container-query

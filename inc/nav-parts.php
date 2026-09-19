@@ -38,12 +38,17 @@ function jbnewgen_breadcrumbs( $trail ) {
 
 /**
  * @param array $args eyebrow, title, trail, note
+ *
+ * `eyebrow` is accepted and intentionally ignored: PageHeader.tsx still
+ * declares the prop in its type but its function body never renders it --
+ * a dead prop left over from a past refactor. Every caller in
+ * ../jbnewgen/src still passes one, and the live site never shows it, so
+ * this matches production rather than the stale type signature.
  */
 function jbnewgen_page_header( $args ) {
-	$eyebrow = isset( $args['eyebrow'] ) ? $args['eyebrow'] : '';
-	$title   = isset( $args['title'] ) ? $args['title'] : '';
-	$trail   = isset( $args['trail'] ) ? $args['trail'] : array();
-	$note    = isset( $args['note'] ) ? $args['note'] : '';
+	$title = isset( $args['title'] ) ? $args['title'] : '';
+	$trail = isset( $args['trail'] ) ? $args['trail'] : array();
+	$note  = isset( $args['note'] ) ? $args['note'] : '';
 	?>
 	<header class="relative overflow-hidden border-b border-ink-100 bg-ink-50/40">
 		<div class="dot-grid pointer-events-none absolute inset-0 opacity-[0.3]"></div>
@@ -52,9 +57,6 @@ function jbnewgen_page_header( $args ) {
 		<div class="relative mx-auto max-w-7xl px-5 pb-14 pt-10 sm:px-8 sm:pb-16 sm:pt-14">
 			<?php if ( $trail ) : ?>
 				<div class="mb-6"><?php jbnewgen_breadcrumbs( $trail ); ?></div>
-			<?php endif; ?>
-			<?php if ( $eyebrow ) : ?>
-				<p class="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-flame-600"><?php echo esc_html( $eyebrow ); ?></p>
 			<?php endif; ?>
 			<h1 class="text-balance text-4xl font-bold tracking-tight text-ink-900 sm:text-5xl md:text-[3.4rem] md:leading-[1.05]"><?php echo esc_html( $title ); ?></h1>
 			<?php if ( $note ) : ?>
@@ -141,15 +143,15 @@ function jbnewgen_next_step( $heading = null, $actions = null ) {
 			<div class="relative flex flex-wrap gap-3">
 				<?php foreach ( $actions as $jb_a ) : ?>
 					<?php
-					$jb_variant = isset( $jb_a['variant'] ) ? $jb_a['variant'] : 'primary';
-					$jb_classes = 'light' === $jb_variant
-						? 'inline-flex h-11 items-center justify-center gap-2 rounded-[7px] border border-white/30 bg-white/10 px-5 text-sm font-semibold text-white backdrop-blur transition-colors hover:bg-white/20'
-						: 'inline-flex h-11 items-center justify-center gap-2 rounded-[7px] bg-flame-500 px-5 text-sm font-semibold text-white transition-colors hover:bg-flame-600';
+					jbnewgen_button(
+						$jb_a['label'],
+						jbnewgen_href( $jb_a['href'] ),
+						array(
+							'variant' => isset( $jb_a['variant'] ) ? $jb_a['variant'] : 'primary',
+							'icon'    => isset( $jb_a['icon'] ) ? $jb_a['icon'] : '',
+						)
+					);
 					?>
-					<a href="<?php echo esc_url( jbnewgen_href( $jb_a['href'] ) ); ?>" class="<?php echo esc_attr( $jb_classes ); ?>">
-						<?php echo esc_html( $jb_a['label'] ); ?>
-						<?php if ( ! empty( $jb_a['icon'] ) ) : ?><?php jbnewgen_icon( $jb_a['icon'], 16 ); ?><?php endif; ?>
-					</a>
 				<?php endforeach; ?>
 			</div>
 		</div>

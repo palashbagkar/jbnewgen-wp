@@ -158,13 +158,15 @@ $jb_link = 'jb-navlink rounded-[7px] px-4 py-2 text-[0.95rem] font-medium transi
 				<a href="<?php echo esc_url( home_url( '/contact' ) ); ?>" class="<?php echo esc_attr( $jb_link ); ?><?php echo jbnewgen_nav_is_active( home_url( '/contact' ) ) ? ' is-active' : ''; ?>"><?php esc_html_e( 'Contact', 'jbnewgen' ); ?></a>
 
 				<?php if ( $jb_badge_on && $jb_badge_label ) : ?>
-					<a href="<?php echo esc_url( $jb_badge_href ? $jb_badge_href : home_url( '/' ) ); ?>" class="ml-2 inline-flex items-center gap-1.5 rounded-[7px] border border-flame-500/40 px-3 py-1.5 text-xs font-semibold text-flame-600 transition-colors hover:bg-flame-500/10"><?php echo esc_html( $jb_badge_label ); ?></a>
+					<a href="<?php echo esc_url( $jb_badge_href ? $jb_badge_href : home_url( '/' ) ); ?>" class="jb-navlink ml-2 inline-flex items-center gap-1.5 px-2 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.12em] transition-colors">
+						<?php jbnewgen_icon( 'ribbon', 13, 'shrink-0 text-flame-500' ); ?>
+						<?php echo esc_html( $jb_badge_label ); ?>
+					</a>
 				<?php endif; ?>
 			</nav>
 
 			<div class="flex items-center gap-2">
 				<a href="<?php echo esc_url( home_url( '/search' ) ); ?>" aria-label="<?php esc_attr_e( 'Search', 'jbnewgen' ); ?>" class="jb-navlink grid h-10 w-10 place-items-center rounded-[7px] transition-colors"><?php jbnewgen_icon( 'search', 18 ); ?></a>
-				<a href="<?php echo esc_url( home_url( '/quote' ) ); ?>" class="hidden rounded-[7px] bg-flame-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-flame-600 sm:inline-flex"><?php esc_html_e( 'Get a quote', 'jbnewgen' ); ?></a>
 				<button type="button" id="jb-menu-toggle" class="jb-navlink grid h-10 w-10 place-items-center rounded-[7px] lg:hidden" aria-expanded="false" aria-controls="jb-mobile-nav" aria-label="<?php esc_attr_e( 'Menu', 'jbnewgen' ); ?>"><?php jbnewgen_icon( 'menu', 20 ); ?></button>
 			</div>
 		</div>
